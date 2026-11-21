@@ -1,4 +1,4 @@
-import { CopyPlus, ListX, Plus, ReceiptText, Search } from 'lucide-react'
+import { Check, CopyPlus, ListX, Plus, ReceiptText, Search, Trash2 } from 'lucide-react'
 import { useMemo, useState } from 'react'
 import { Link, useSearchParams } from 'react-router'
 import { Aviso } from '@/components/ui/Aviso'
@@ -7,15 +7,17 @@ import { CabecalhoPagina } from '@/components/ui/CabecalhoPagina'
 import { Chip } from '@/components/ui/Chip'
 import { CarregandoLista } from '@/components/ui/Esqueleto'
 import { EstadoVazio } from '@/components/ui/EstadoVazio'
+import { LinhaDeslizavel } from '@/components/ui/LinhaDeslizavel'
 import { SeletorMes } from '@/components/ui/SeletorMes'
 import { useMapaCategorias } from '@/features/categorias/api'
 import { cn } from '@/lib/cn'
 import { formatBRL, formatDiaCabecalho, nomeMes, somar, somarMeses } from '@/lib/format'
 import { useMes } from '@/lib/mesContext'
+import { useOnline } from '@/lib/online'
 import { useDeslizar } from '@/lib/useDeslizar'
 import type { Lancamento } from '@/types/db'
 import { AcoesLancamento } from './AcoesLancamento'
-import { normalizarTexto, useLancamentosMes } from './api'
+import { normalizarTexto, useAcoesLancamento, useLancamentosMes } from './api'
 import { CopiarMesAnterior } from './CopiarMesAnterior'
 import { ItemLancamento } from './ItemLancamento'
 
@@ -42,6 +44,8 @@ export function LancamentosPage() {
 
   const { data, isLoading, isError, refetch } = useLancamentosMes(mes)
   const categorias = useMapaCategorias()
+  const { pagar, excluir } = useAcoesLancamento()
+  const online = useOnline()
 
   function mudarParam(chave: string, valor: string, padrao: string) {
     setParams(
@@ -236,14 +240,39 @@ export function LancamentosPage() {
                         {formatBRL(Math.abs(saldo))}
                       </span>
                     </div>
-                    <div className="flex flex-col divide-y divide-border rounded-card border border-border bg-surface px-4 py-1.5">
+                    <div className="flex flex-col divide-y divide-border overflow-hidden rounded-card border border-border bg-surface">
                       {itens.map((l) => (
-                        <ItemLancamento
+                        <LinhaDeslizavel
                           key={l.id}
-                          lancamento={l}
-                          categoria={categorias.get(l.categoria_id ?? '')}
-                          onClick={() => setSelecionado(l)}
-                        />
+                          aoDeslizarDireita={
+                            l.status !== 'pago' && online
+                              ? {
+                                  rotulo: l.tipo === 'entrada' ? 'Receber' : 'Pagar',
+                                  icone: Check,
+                                  tom: 'success',
+                                  executar: () => void pagar(l),
+                                }
+                              : undefined
+                          }
+                          aoDeslizarEsquerda={
+                            online
+                              ? {
+                                  rotulo: 'Excluir',
+                                  icone: Trash2,
+                                  tom: 'danger',
+                                  executar: () => void excluir(l),
+                                }
+                              : undefined
+                          }
+                        >
+                          <div className="px-4 py-0.5">
+                            <ItemLancamento
+                              lancamento={l}
+                              categoria={categorias.get(l.categoria_id ?? '')}
+                              onClick={() => setSelecionado(l)}
+                            />
+                          </div>
+                        </LinhaDeslizavel>
                       ))}
                     </div>
                   </section>

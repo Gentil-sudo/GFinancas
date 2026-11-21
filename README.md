@@ -4,7 +4,8 @@ Organizador financeiro pessoal: lançamentos, parcelas, metas e investimentos, s
 banco (Supabase) para nunca mais perder dados. O plano completo está em [PLANO.md](PLANO.md).
 
 **Stack:** React + Vite + TypeScript · Tailwind CSS · React Router · TanStack Query ·
-react-hook-form + zod · Recharts · Supabase (Auth + Postgres + RLS) · Vercel.
+react-hook-form + zod · Recharts · write-excel-file (backup .xlsx) · vite-plugin-pwa ·
+Supabase (Auth + Postgres + RLS) · Vercel.
 
 ## Rodando localmente
 
@@ -17,13 +18,14 @@ cp .env.example .env.local   # no Windows/PowerShell: copy .env.example .env.loc
 npm run dev                  # abre em http://localhost:5173
 ```
 
-| Comando           | O que faz                            |
-| ----------------- | ------------------------------------ |
-| `npm run dev`     | Servidor de desenvolvimento          |
-| `npm run build`   | Checa os tipos e gera a versão final |
-| `npm run lint`    | ESLint                               |
-| `npm run format`  | Formata o código com Prettier        |
-| `npm run preview` | Serve a versão gerada pelo `build`   |
+| Comando           | O que faz                                             |
+| ----------------- | ----------------------------------------------------- |
+| `npm run dev`     | Servidor de desenvolvimento                           |
+| `npm run build`   | Checa os tipos e gera a versão final                  |
+| `npm run lint`    | ESLint                                                |
+| `npm run format`  | Formata o código com Prettier                         |
+| `npm run preview` | Serve a versão gerada pelo `build`                    |
+| `npm run icones`  | Regera os ícones do app a partir de `public/logo.svg` |
 
 ## Configurando o Supabase (uma vez só)
 
@@ -136,3 +138,31 @@ Três temas (Clareza, Noite, Lavanda) + Automático, escolhidos em **Configuraç
 (PLANO §4.0.1). As cores ficam só em [src/index.css](src/index.css), como variáveis por
 `[data-theme]`; os componentes usam apenas os tokens (`bg-surface`, `text-muted`, `bg-primary`…).
 A escolha é salva no perfil (Supabase) e no navegador (para não piscar ao abrir).
+
+## Publicar na Vercel
+
+1. Crie um repositório **privado** no GitHub e envie o projeto (`git remote add origin ...` e
+   `git push -u origin main`). O `.env.local` não vai junto (está no `.gitignore`).
+2. Em <https://vercel.com> → **Add New… → Project** → importe o repositório.
+   A Vercel detecta Vite sozinha (as configurações estão em [vercel.json](vercel.json)).
+3. Antes de clicar em **Deploy**, abra **Environment Variables** e cadastre:
+   - `VITE_SUPABASE_URL` = a mesma do `.env.local`
+   - `VITE_SUPABASE_PUBLISHABLE_KEY` = a mesma do `.env.local`
+4. **Deploy**. Anote o endereço (ex.: `https://minhas-financas-xyz.vercel.app`).
+5. No Supabase → **Authentication → URL Configuration**:
+   - **Site URL**: o endereço da Vercel.
+   - **Redirect URLs**: adicione `https://SEU-ENDERECO.vercel.app/**` (mantenha o do localhost).
+6. Recomendado: depois de criar sua conta, **Authentication → Sign In / Providers → Email** →
+   desligue **Allow new users to sign up**. Assim ninguém mais cria conta no seu app.
+
+A cada `git push` na `main`, a Vercel publica a versão nova. O app avisa "Nova versão
+disponível — Atualizar" (não recarrega sozinho para não perder um formulário aberto).
+
+## Instalar no celular (PWA)
+
+- **Android (Chrome):** abra o endereço da Vercel → menu ⋮ → **Instalar app** (ou
+  "Adicionar à tela inicial").
+- **iPhone (Safari):** abra o endereço → botão **Compartilhar** → **Adicionar à Tela de Início**.
+
+O app abre em tela cheia, com o ícone "Finanças". Sem internet ele abre, mas avisa e não deixa
+salvar (os dados vivem só no Supabase, nunca "só no celular").

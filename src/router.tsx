@@ -1,43 +1,56 @@
+import type { ComponentType } from 'react'
 import { createBrowserRouter, Navigate } from 'react-router'
 import { AppLayout } from '@/components/layout/AppLayout'
 import { AreaLogada } from '@/components/layout/AreaLogada'
+import { TelaCarregando } from '@/components/ui/Spinner'
 import { AuthProvider } from '@/features/auth/AuthProvider'
-import { CadastroPage } from '@/features/auth/CadastroPage'
-import { EsqueciSenhaPage } from '@/features/auth/EsqueciSenhaPage'
 import { LoginPage } from '@/features/auth/LoginPage'
-import { RedefinirSenhaPage } from '@/features/auth/RedefinirSenhaPage'
 import { RotaDeslogado, RotaProtegida } from '@/features/auth/rotas'
-import { BackupPage } from '@/features/configuracoes/BackupPage'
-import { CategoriasPage } from '@/features/configuracoes/CategoriasPage'
-import { ConfiguracaoInicialPage } from '@/features/configuracoes/ConfiguracaoInicialPage'
-import { ConfiguracoesPage } from '@/features/configuracoes/ConfiguracoesPage'
-import { HistoricoPage } from '@/features/configuracoes/HistoricoPage'
-import { LixeiraPage } from '@/features/configuracoes/LixeiraPage'
 import { DashboardPage } from '@/features/dashboard/DashboardPage'
-import { InvestimentosPage } from '@/features/investimentos/InvestimentosPage'
-import { FormLancamentoPage } from '@/features/lancamentos/FormLancamentoPage'
-import { LancamentosPage } from '@/features/lancamentos/LancamentosPage'
-import { FormMetaPage } from '@/features/metas/FormMetaPage'
-import { MetasPage } from '@/features/metas/MetasPage'
-import { FormCompraPage } from '@/features/parcelas/FormCompraPage'
-import { ParcelasPage } from '@/features/parcelas/ParcelasPage'
+
+/**
+ * Carrega a tela só quando ela é aberta (o app abre mais rápido, principalmente no celular).
+ * Login e Início ficam no pacote principal: são as primeiras telas.
+ */
+function tela<M>(carregar: () => Promise<M>, escolher: (m: M) => ComponentType) {
+  return async () => ({ Component: escolher(await carregar()) })
+}
 
 export const router = createBrowserRouter([
   {
     // Raiz: disponibiliza a sessão para todas as rotas.
     element: <AuthProvider />,
+    HydrateFallback: TelaCarregando,
     children: [
       // Só para quem NÃO está logado
       {
         element: <RotaDeslogado />,
         children: [
           { path: '/login', element: <LoginPage /> },
-          { path: '/cadastro', element: <CadastroPage /> },
-          { path: '/esqueci-senha', element: <EsqueciSenhaPage /> },
+          {
+            path: '/cadastro',
+            lazy: tela(
+              () => import('@/features/auth/CadastroPage'),
+              (m) => m.CadastroPage,
+            ),
+          },
+          {
+            path: '/esqueci-senha',
+            lazy: tela(
+              () => import('@/features/auth/EsqueciSenhaPage'),
+              (m) => m.EsqueciSenhaPage,
+            ),
+          },
         ],
       },
       // Destino do link de recuperação (chega com sessão temporária)
-      { path: '/redefinir-senha', element: <RedefinirSenhaPage /> },
+      {
+        path: '/redefinir-senha',
+        lazy: tela(
+          () => import('@/features/auth/RedefinirSenhaPage'),
+          (m) => m.RedefinirSenhaPage,
+        ),
+      },
       // App: exige login
       {
         element: <RotaProtegida />,
@@ -50,29 +63,128 @@ export const router = createBrowserRouter([
                 element: <AppLayout />,
                 children: [
                   { index: true, element: <DashboardPage /> },
-                  { path: 'lancamentos', element: <LancamentosPage /> },
-                  { path: 'parcelas', element: <ParcelasPage /> },
-                  { path: 'metas', element: <MetasPage /> },
-                  { path: 'investimentos', element: <InvestimentosPage /> },
-                  { path: 'configuracoes', element: <ConfiguracoesPage /> },
-                  { path: 'configuracoes/categorias', element: <CategoriasPage /> },
-                  { path: 'configuracoes/lixeira', element: <LixeiraPage /> },
-                  { path: 'configuracoes/historico', element: <HistoricoPage /> },
-                  { path: 'configuracoes/backup', element: <BackupPage /> },
-                  { path: 'configuracao-inicial', element: <ConfiguracaoInicialPage /> },
+                  {
+                    path: 'lancamentos',
+                    lazy: tela(
+                      () => import('@/features/lancamentos/LancamentosPage'),
+                      (m) => m.LancamentosPage,
+                    ),
+                  },
+                  {
+                    path: 'parcelas',
+                    lazy: tela(
+                      () => import('@/features/parcelas/ParcelasPage'),
+                      (m) => m.ParcelasPage,
+                    ),
+                  },
+                  {
+                    path: 'metas',
+                    lazy: tela(
+                      () => import('@/features/metas/MetasPage'),
+                      (m) => m.MetasPage,
+                    ),
+                  },
+                  {
+                    path: 'investimentos',
+                    lazy: tela(
+                      () => import('@/features/investimentos/InvestimentosPage'),
+                      (m) => m.InvestimentosPage,
+                    ),
+                  },
+                  {
+                    path: 'configuracoes',
+                    lazy: tela(
+                      () => import('@/features/configuracoes/ConfiguracoesPage'),
+                      (m) => m.ConfiguracoesPage,
+                    ),
+                  },
+                  {
+                    path: 'configuracoes/categorias',
+                    lazy: tela(
+                      () => import('@/features/configuracoes/CategoriasPage'),
+                      (m) => m.CategoriasPage,
+                    ),
+                  },
+                  {
+                    path: 'configuracoes/lixeira',
+                    lazy: tela(
+                      () => import('@/features/configuracoes/LixeiraPage'),
+                      (m) => m.LixeiraPage,
+                    ),
+                  },
+                  {
+                    path: 'configuracoes/historico',
+                    lazy: tela(
+                      () => import('@/features/configuracoes/HistoricoPage'),
+                      (m) => m.HistoricoPage,
+                    ),
+                  },
+                  {
+                    path: 'configuracoes/backup',
+                    lazy: tela(
+                      () => import('@/features/configuracoes/BackupPage'),
+                      (m) => m.BackupPage,
+                    ),
+                  },
+                  {
+                    path: 'configuracao-inicial',
+                    lazy: tela(
+                      () => import('@/features/configuracoes/ConfiguracaoInicialPage'),
+                      (m) => m.ConfiguracaoInicialPage,
+                    ),
+                  },
                 ],
               },
               // Formulários em tela cheia (sem a barra de navegação)
-              { path: '/lancamentos/novo', element: <FormLancamentoPage modo="novo" /> },
-              { path: '/lancamentos/:id/editar', element: <FormLancamentoPage modo="editar" /> },
+              {
+                path: '/lancamentos/novo',
+                lazy: tela(
+                  () => import('@/features/lancamentos/FormLancamentoPage'),
+                  (m) => () => <m.FormLancamentoPage modo="novo" />,
+                ),
+              },
+              {
+                path: '/lancamentos/:id/editar',
+                lazy: tela(
+                  () => import('@/features/lancamentos/FormLancamentoPage'),
+                  (m) => () => <m.FormLancamentoPage modo="editar" />,
+                ),
+              },
               {
                 path: '/lancamentos/:id/duplicar',
-                element: <FormLancamentoPage modo="duplicar" />,
+                lazy: tela(
+                  () => import('@/features/lancamentos/FormLancamentoPage'),
+                  (m) => () => <m.FormLancamentoPage modo="duplicar" />,
+                ),
               },
-              { path: '/parcelas/nova', element: <FormCompraPage modo="nova" /> },
-              { path: '/parcelas/:id/editar', element: <FormCompraPage modo="editar" /> },
-              { path: '/metas/nova', element: <FormMetaPage modo="nova" /> },
-              { path: '/metas/:id/editar', element: <FormMetaPage modo="editar" /> },
+              {
+                path: '/parcelas/nova',
+                lazy: tela(
+                  () => import('@/features/parcelas/FormCompraPage'),
+                  (m) => () => <m.FormCompraPage modo="nova" />,
+                ),
+              },
+              {
+                path: '/parcelas/:id/editar',
+                lazy: tela(
+                  () => import('@/features/parcelas/FormCompraPage'),
+                  (m) => () => <m.FormCompraPage modo="editar" />,
+                ),
+              },
+              {
+                path: '/metas/nova',
+                lazy: tela(
+                  () => import('@/features/metas/FormMetaPage'),
+                  (m) => () => <m.FormMetaPage modo="nova" />,
+                ),
+              },
+              {
+                path: '/metas/:id/editar',
+                lazy: tela(
+                  () => import('@/features/metas/FormMetaPage'),
+                  (m) => () => <m.FormMetaPage modo="editar" />,
+                ),
+              },
             ],
           },
         ],
