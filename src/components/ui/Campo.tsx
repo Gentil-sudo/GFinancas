@@ -1,6 +1,7 @@
 import { Eye, EyeOff } from 'lucide-react'
 import { useId, useState, type ComponentProps, type ReactNode } from 'react'
 import { cn } from '@/lib/cn'
+import { classeCampo, classeRotulo } from './estilos'
 
 interface Props extends ComponentProps<'input'> {
   label: string
@@ -21,7 +22,7 @@ export function Campo({ label, erro, dica, direita, id, className, ...props }: P
 
   return (
     <div className="flex flex-col gap-1.5">
-      <label htmlFor={campoId} className="text-sm font-medium text-slate-700">
+      <label htmlFor={campoId} className={classeRotulo}>
         {label}
       </label>
       <div className="relative">
@@ -29,33 +30,34 @@ export function Campo({ label, erro, dica, direita, id, className, ...props }: P
           id={campoId}
           aria-invalid={erro ? true : undefined}
           aria-describedby={descId}
-          className={cn(
-            // text-base evita o zoom automático do iPhone ao focar o campo
-            'min-h-11 w-full rounded-xl border border-slate-300 bg-white px-3 text-base text-slate-900 placeholder:text-slate-400',
-            'focus:border-marca focus:ring-2 focus:ring-marca/20 focus:outline-none',
-            'aria-invalid:border-saida aria-invalid:focus:ring-saida/20',
-            direita && 'pr-12',
-            className,
-          )}
+          className={cn(classeCampo, direita && 'pr-12', className)}
           {...props}
         />
         {direita && (
           <div className="absolute inset-y-0 right-0 flex items-center pr-1">{direita}</div>
         )}
       </div>
-      {erro ? (
-        <p id={descId} className="text-sm text-saida">
-          {erro}
-        </p>
-      ) : (
-        dica && (
-          <p id={descId} className="text-sm text-slate-500">
-            {dica}
-          </p>
-        )
-      )}
+      <MensagemCampo id={descId} erro={erro} dica={dica} />
     </div>
   )
+}
+
+export function MensagemCampo({ id, erro, dica }: { id?: string; erro?: string; dica?: string }) {
+  if (erro) {
+    return (
+      <p id={id} className="text-sm font-medium text-danger">
+        {erro}
+      </p>
+    )
+  }
+  if (dica) {
+    return (
+      <p id={id} className="text-sm text-muted">
+        {dica}
+      </p>
+    )
+  }
+  return null
 }
 
 /** Campo de senha com botão de mostrar/ocultar. */
@@ -73,7 +75,7 @@ export function CampoSenha(props: Omit<Props, 'type' | 'direita'>) {
           onClick={() => setVisivel((v) => !v)}
           aria-label={visivel ? 'Ocultar senha' : 'Mostrar senha'}
           aria-pressed={visivel}
-          className="grid size-10 place-items-center rounded-lg text-slate-500 hover:bg-slate-100 hover:text-slate-700"
+          className="grid size-11 place-items-center rounded-xl text-muted hover:bg-track hover:text-text"
         >
           <Icone className="size-5" aria-hidden />
         </button>

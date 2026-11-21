@@ -47,20 +47,20 @@ export function CadastroPage() {
       <AuthLayout
         titulo="Confirme seu e-mail"
         rodape={
-          <Link to="/login" className="font-medium text-marca hover:underline">
+          <Link to="/login" className="font-medium text-primary hover:underline">
             Voltar para o login
           </Link>
         }
       >
         <div className="flex flex-col items-center text-center">
-          <span className="mb-3 grid size-12 place-items-center rounded-full bg-entrada-suave text-entrada">
+          <span className="mb-3 grid size-12 place-items-center rounded-full bg-success/10 text-success">
             <MailCheck className="size-6" aria-hidden />
           </span>
-          <p className="text-sm text-slate-700">
+          <p className="text-sm text-muted">
             Conta criada! Enviamos um link para <strong>{emailConfirmacao}</strong>. Abra o e-mail e
             clique no link para entrar.
           </p>
-          <p className="mt-3 text-sm text-slate-500">Não chegou? Veja a caixa de spam.</p>
+          <p className="mt-3 text-sm text-muted">Não chegou? Veja a caixa de spam.</p>
         </div>
       </AuthLayout>
     )
@@ -73,7 +73,7 @@ export function CadastroPage() {
       rodape={
         <p>
           Já tem conta?{' '}
-          <Link to="/login" className="font-medium text-marca hover:underline">
+          <Link to="/login" className="font-medium text-primary hover:underline">
             Entrar
           </Link>
         </p>

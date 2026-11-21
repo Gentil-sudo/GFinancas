@@ -1,4 +1,12 @@
-import { addMonths, format, parseISO, startOfMonth } from 'date-fns'
+import {
+  addMonths,
+  differenceInCalendarDays,
+  endOfMonth,
+  format,
+  parseISO,
+  setDate,
+  startOfMonth,
+} from 'date-fns'
 import { ptBR } from 'date-fns/locale'
 
 // ---------- Dinheiro ----------
@@ -23,13 +31,17 @@ export function formatBRL(valor: number | string | null | undefined): string {
 
 /**
  * Converte o que o usuário digitou em número. Aceita vírgula ou ponto:
- * "1.234,56" → 1234.56 · "1234,5" → 1234.5 · "1234.56" → 1234.56. Retorna `null` se inválido.
+ * "1.234,56" → 1234.56 · "1234,5" → 1234.5 · "1234.56" → 1234.56 · "1.500" → 1500 (milhar).
+ * Retorna `null` se inválido.
  */
 export function parseValor(texto: string): number | null {
   let s = texto.trim().replace(/[R$\s]/g, '')
   if (!s) return null
   if (s.includes(',')) {
     s = s.replace(/\./g, '').replace(',', '.')
+  } else if (/^\d{1,3}(\.\d{3})+$/.test(s)) {
+    // Só pontos em grupos de 3 dígitos: separador de milhar ("1.500", "12.345.678").
+    s = s.replace(/\./g, '')
   }
   const n = Number(s)
   return Number.isFinite(n) ? round2(n) : null
@@ -62,4 +74,51 @@ export function formatMes(comp: string): string {
 /** "2026-11-01" → "nov/2026". */
 export function formatMesCurto(comp: string): string {
   return format(parseISO(comp), 'MMM/yyyy', { locale: ptBR })
+}
+
+/** "2026-11-01" → "outubro" (nome do mês, minúsculo). */
+export function nomeMes(comp: string): string {
+  return format(parseISO(comp), 'MMMM', { locale: ptBR })
+}
+
+// ---------- Dias ----------
+
+/** Hoje no formato do banco ("2026-11-21"), no fuso do aparelho. */
+export function hoje(): string {
+  return format(new Date(), 'yyyy-MM-dd')
+}
+
+/** Quantos dias faltam até a data (negativo = já passou). */
+export function diasAte(dataISO: string): number {
+  return differenceInCalendarDays(parseISO(dataISO), new Date())
+}
+
+/** "2026-11-23" → "23/11". */
+export function formatDiaMes(dataISO: string): string {
+  return format(parseISO(dataISO), 'dd/MM')
+}
+
+const DIAS_SEMANA = ['dom', 'seg', 'ter', 'qua', 'qui', 'sex', 'sáb']
+
+/** Cabeçalho de grupo do extrato: "Hoje · sáb, 21 nov", "Ontem · sex, 20 nov", "Qui, 19 nov". */
+export function formatDiaCabecalho(dataISO: string): string {
+  const d = parseISO(dataISO)
+  const base = `${DIAS_SEMANA[d.getDay()]}, ${format(d, 'd MMM', { locale: ptBR })}`
+  const dias = differenceInCalendarDays(d, new Date())
+  if (dias === 0) return `Hoje · ${base}`
+  if (dias === -1) return `Ontem · ${base}`
+  return base.charAt(0).toUpperCase() + base.slice(1)
+}
+
+/** Mesma data em outro mês, limitando ao último dia ("2026-10-31" → nov = "2026-11-30"). */
+export function mesmoDiaEm(dataISO: string, comp: string): string {
+  const dia = parseISO(dataISO).getDate()
+  const inicio = parseISO(comp)
+  const ultimo = endOfMonth(inicio).getDate()
+  return format(setDate(inicio, Math.min(dia, ultimo)), 'yyyy-MM-dd')
+}
+
+/** Formata número para o campo de valor: 1234.5 → "1.234,50". */
+export function formatValorCampo(n: number): string {
+  return n.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
 }

@@ -33,7 +33,7 @@ export function EsqueciSenhaPage() {
       titulo="Esqueci minha senha"
       subtitulo={enviadoPara ? undefined : 'Enviaremos um link para você criar uma nova senha.'}
       rodape={
-        <Link to="/login" className="font-medium text-marca hover:underline">
+        <Link to="/login" className="font-medium text-primary hover:underline">
           Voltar para o login
         </Link>
       }

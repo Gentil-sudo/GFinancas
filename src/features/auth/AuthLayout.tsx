@@ -18,9 +18,9 @@ export function AuthLayout({ titulo, subtitulo, children, rodape }: Props) {
       <div className="w-full max-w-sm">
         <Marca className="mb-8 justify-center text-lg" />
 
-        <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+        <div className="rounded-card border border-border bg-surface p-6 shadow-sm">
           <h1 className="text-xl font-semibold tracking-tight">{titulo}</h1>
-          {subtitulo && <p className="mt-1 text-sm text-slate-500">{subtitulo}</p>}
+          {subtitulo && <p className="mt-1 text-sm text-muted">{subtitulo}</p>}
 
           {!supabaseConfigurado && (
             <Aviso tipo="atencao" className="mt-4">
@@ -33,9 +33,7 @@ export function AuthLayout({ titulo, subtitulo, children, rodape }: Props) {
         </div>
 
         {rodape && (
-          <div className="mt-6 flex flex-col items-center gap-2 text-sm text-slate-600">
-            {rodape}
-          </div>
+          <div className="mt-6 flex flex-col items-center gap-2 text-sm text-muted">{rodape}</div>
         )}
       </div>
     </div>

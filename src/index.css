@@ -1,26 +1,124 @@
 @import 'tailwindcss';
 
 /*
- * Cores com significado (PLANO §4.0) — usar sempre estas, nunca cores soltas:
- *   entrada/positivo = verde · saida/negativo = vermelho
- *   pendente/vencendo = âmbar · pago/concluído = cinza
+ * Temas (PLANO §4.0.1). Os componentes usam SÓ estes tokens, nunca cores diretas:
+ *   bg-bg, bg-surface, border-border, text-text, text-muted, bg-primary, bg-primary-soft,
+ *   text-on-primary, bg-hero-bg, text-hero-text, text-hero-muted, text-hero-value,
+ *   text-success (entrada/pago), text-danger (saída/vencida), text-warning (pendente),
+ *   bg-warning-soft, bg-danger-soft, bg-track (fundo de barras)
+ *   font-display (títulos e números), font-sans (texto), rounded-card (raio dos cards)
+ *
+ * O tema ativo fica em <html data-theme="clareza|noite|lavanda"> (ver src/lib/tema.ts).
  */
-@theme {
-  --font-sans:
-    'Inter', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial,
-    sans-serif;
+@theme inline {
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-border: var(--border);
+  --color-text: var(--text);
+  --color-muted: var(--muted);
+  --color-primary: var(--primary);
+  --color-primary-soft: var(--primary-soft);
+  --color-on-primary: var(--on-primary);
+  --color-hero-bg: var(--hero-bg);
+  --color-hero-text: var(--hero-text);
+  --color-hero-muted: var(--hero-muted);
+  --color-hero-value: var(--hero-value);
+  --color-success: var(--success);
+  --color-danger: var(--danger);
+  --color-warning: var(--warning);
+  --color-warning-soft: var(--warning-soft);
+  --color-danger-soft: var(--danger-soft);
+  --color-track: var(--track);
+  --color-grafico-entrada: var(--grafico-entrada);
+  --color-grafico-saida: var(--grafico-saida);
 
-  --color-marca: var(--color-teal-700);
-  --color-marca-suave: var(--color-teal-50);
+  --font-sans: var(--fonte-texto);
+  --font-display: var(--fonte-titulo);
+  --radius-card: var(--raio-card);
+}
 
-  --color-entrada: var(--color-emerald-600);
-  --color-entrada-suave: var(--color-emerald-50);
-  --color-saida: var(--color-rose-600);
-  --color-saida-suave: var(--color-rose-50);
-  --color-pendente: var(--color-amber-600);
-  --color-pendente-suave: var(--color-amber-50);
-  --color-pago: var(--color-slate-500);
-  --color-pago-suave: var(--color-slate-100);
+:root,
+[data-theme='clareza'] {
+  color-scheme: light;
+  --bg: #f4f6fa;
+  --surface: #ffffff;
+  --border: #e3e7ee;
+  --text: #111827;
+  --muted: #4b5563;
+  --primary: #2f4fd8;
+  --primary-soft: #e8edfd;
+  --on-primary: #ffffff;
+  --hero-bg: #2f4fd8;
+  --hero-text: #ffffff;
+  --hero-muted: #dce3ff;
+  --hero-value: #ffffff;
+  --success: #15803d;
+  --danger: #b91c1c;
+  --warning: #b45309;
+  --warning-soft: #fef3e2;
+  --danger-soft: #fdecec;
+  --track: #e5e9f2;
+  --fonte-titulo: 'Space Grotesk', 'Inter', ui-sans-serif, system-ui, sans-serif;
+  --fonte-texto: 'Inter', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --raio-card: 16px;
+  /* Gráficos: cores validadas para daltonismo (skill dataviz, validate_palette.js) */
+  --grafico-entrada: #2f4fd8;
+  --grafico-saida: #b91c1c;
+}
+
+[data-theme='noite'] {
+  color-scheme: dark;
+  --bg: #0d1117;
+  --surface: #161b22;
+  --border: #262d38;
+  --text: #e6edf3;
+  --muted: #9ba7b4;
+  --primary: #2dd4bf;
+  --primary-soft: #123b37;
+  --on-primary: #0d1117;
+  --hero-bg: #161b22;
+  --hero-text: #e6edf3;
+  --hero-muted: #9ba7b4;
+  --hero-value: #2dd4bf;
+  --success: #4ade80;
+  --danger: #f87171;
+  --warning: #fbbf24;
+  --warning-soft: #3a2e0e;
+  --danger-soft: #3b1a1a;
+  --track: #262d38;
+  --fonte-titulo: 'Manrope', ui-sans-serif, system-ui, sans-serif;
+  --fonte-texto: 'Manrope', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --raio-card: 20px;
+  /* Tons um pouco mais fechados que primary/danger: passam na faixa de luminosidade do escuro */
+  --grafico-entrada: #12a594;
+  --grafico-saida: #ef4444;
+}
+
+[data-theme='lavanda'] {
+  color-scheme: light;
+  --bg: #f7f5fc;
+  --surface: #ffffff;
+  --border: #e8e3f3;
+  --text: #1e1b2e;
+  --muted: #5b5670;
+  --primary: #6d3fd1;
+  --primary-soft: #efe8fc;
+  --on-primary: #ffffff;
+  --hero-bg: #2a1f4a;
+  --hero-text: #ffffff;
+  --hero-muted: #d9cff5;
+  --hero-value: #ffffff;
+  --success: #12805c;
+  --danger: #c0362c;
+  --warning: #a25a07;
+  --warning-soft: #fbf0df;
+  --danger-soft: #fbe9e7;
+  --track: #ece7f6;
+  --fonte-titulo: 'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif;
+  --fonte-texto: 'Plus Jakarta Sans', ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --raio-card: 24px;
+  --grafico-entrada: #6d3fd1;
+  --grafico-saida: #c0362c;
 }
 
 @layer base {
@@ -29,11 +127,38 @@
   }
 
   body {
-    @apply bg-slate-50 font-sans text-slate-900 antialiased;
+    @apply bg-bg font-sans text-text antialiased;
+  }
+
+  h1,
+  h2,
+  h3 {
+    @apply font-display;
+  }
+
+  /* Ícones lucide com traço 2px em todos os tamanhos. */
+  .lucide {
+    stroke-width: 2px;
   }
 }
 
 /* Valores em dinheiro: dígitos de largura fixa para alinhar em listas. */
 @utility valor {
   font-variant-numeric: tabular-nums;
+}
+
+/* Folha inferior (<dialog>): sobe de baixo no celular, centralizada no desktop. */
+@utility folha {
+  margin: auto auto 0;
+  width: 100%;
+  max-width: 32rem;
+  max-height: 90dvh;
+  border-radius: var(--raio-card) var(--raio-card) 0 0;
+  @media (width >= 48rem) {
+    margin: auto;
+    border-radius: var(--raio-card);
+  }
+  &::backdrop {
+    background: rgb(0 0 0 / 0.45);
+  }
 }

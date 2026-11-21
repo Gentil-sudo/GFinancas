@@ -17,6 +17,7 @@ export type TipoMovimentoMeta = 'aporte' | 'retirada'
 export type TipoInvestimento = 'acoes' | 'fundos' | 'etf' | 'exterior' | 'renda_fixa' | 'outros'
 export type Moeda = 'BRL' | 'USD'
 export type AcaoHistorico = 'insert' | 'update' | 'delete'
+export type Tema = 'automatico' | 'clareza' | 'noite' | 'lavanda'
 
 /** Insert: `Obrigatorios` precisam ser enviados; o resto tem default no banco. `Bloqueados` nunca são enviados. */
 type InsertDe<Row, Obrigatorios extends keyof Row, Bloqueados extends keyof Row = never> = {
@@ -139,6 +140,14 @@ type HistoricoRow = {
   created_at: string
 }
 
+type PerfilRow = {
+  user_id: string
+  nome: string | null
+  tema: Tema
+  created_at: string
+  updated_at: string
+}
+
 type ResumoMensalRow = {
   user_id: string
   competencia: string
@@ -233,6 +242,12 @@ export type Database = {
         Update: UpdateDe<InvestimentoRow, 'valor_brl'>
         Relationships: []
       }
+      perfis: {
+        Row: PerfilRow
+        Insert: InsertDe<PerfilRow, never>
+        Update: UpdateDe<PerfilRow, 'user_id'>
+        Relationships: []
+      }
       historico: {
         Row: HistoricoRow
         // O cliente não pode escrever no histórico (só o trigger de auditoria).
@@ -284,4 +299,5 @@ export type Lancamento = Tables<'lancamentos'>
 export type MetaMovimento = Tables<'meta_movimentos'>
 export type Investimento = Tables<'investimentos'>
 export type Historico = Tables<'historico'>
+export type Perfil = Tables<'perfis'>
 export type ResumoMensal = Tables<'resumo_mensal'>

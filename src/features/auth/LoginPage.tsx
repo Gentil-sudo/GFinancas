@@ -35,7 +35,7 @@ export function LoginPage() {
       rodape={
         <p>
           Não tem conta?{' '}
-          <Link to="/cadastro" className="font-medium text-marca hover:underline">
+          <Link to="/cadastro" className="font-medium text-primary hover:underline">
             Criar conta
           </Link>
         </p>
@@ -62,7 +62,7 @@ export function LoginPage() {
 
         <Link
           to="/esqueci-senha"
-          className="-mt-1 self-end text-sm font-medium text-marca hover:underline"
+          className="-mt-1 self-end text-sm font-medium text-primary hover:underline"
         >
           Esqueci minha senha
         </Link>

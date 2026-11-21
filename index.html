@@ -1,12 +1,43 @@
 <!doctype html>
-<html lang="pt-BR">
+<html lang="pt-BR" data-theme="clareza">
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-    <meta name="theme-color" content="#0f766e" />
+    <meta name="theme-color" content="#F4F6FA" />
     <meta name="description" content="Organizador financeiro pessoal" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <title>Minhas Finanças</title>
+    <script>
+      // Aplica o tema salvo ANTES de a página aparecer (evita piscar). Espelha src/lib/tema.ts.
+      ;(function () {
+        var fontes = {
+          clareza:
+            'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap',
+          noite:
+            'https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap',
+          lavanda:
+            'https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap',
+        }
+        var barra = { clareza: '#F4F6FA', noite: '#0D1117', lavanda: '#F7F5FC' }
+        var t = 'clareza'
+        try {
+          t = localStorage.getItem('tema') || 'clareza'
+        } catch (e) {}
+        if (t === 'automatico') {
+          t = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'noite' : 'clareza'
+        }
+        if (!fontes[t]) t = 'clareza'
+        document.documentElement.setAttribute('data-theme', t)
+        var link = document.createElement('link')
+        link.id = 'fonte-tema'
+        link.rel = 'stylesheet'
+        link.href = fontes[t]
+        document.head.appendChild(link)
+        document.querySelector('meta[name="theme-color"]').setAttribute('content', barra[t])
+      })()
+    </script>
   </head>
   <body>
     <div id="root"></div>

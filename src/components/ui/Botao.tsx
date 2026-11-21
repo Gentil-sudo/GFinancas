@@ -2,17 +2,25 @@ import type { ComponentProps } from 'react'
 import { cn } from '@/lib/cn'
 import { Spinner } from './Spinner'
 
-type Variante = 'primario' | 'secundario' | 'fantasma' | 'perigo'
+type Variante = 'primario' | 'secundario' | 'contorno' | 'fantasma' | 'perigo'
+type Tamanho = 'normal' | 'grande'
 
 const estilos: Record<Variante, string> = {
-  primario: 'bg-marca text-white hover:bg-teal-800',
-  secundario: 'border border-slate-300 bg-white text-slate-800 hover:bg-slate-50',
-  fantasma: 'text-slate-700 hover:bg-slate-100',
-  perigo: 'bg-saida text-white hover:bg-rose-700',
+  primario: 'bg-primary text-on-primary hover:opacity-90',
+  secundario: 'border border-border bg-surface text-text hover:bg-track',
+  contorno: 'border border-primary bg-transparent text-primary hover:bg-primary-soft',
+  fantasma: 'text-text hover:bg-track',
+  perigo: 'bg-danger text-on-primary hover:opacity-90',
+}
+
+const tamanhos: Record<Tamanho, string> = {
+  normal: 'min-h-11 rounded-xl px-4 text-sm',
+  grande: 'min-h-14 rounded-card px-5 text-base',
 }
 
 interface Props extends ComponentProps<'button'> {
   variante?: Variante
+  tamanho?: Tamanho
   /** Mostra o spinner e bloqueia cliques (ex.: enquanto espera o servidor). */
   carregando?: boolean
   larguraTotal?: boolean
@@ -20,6 +28,7 @@ interface Props extends ComponentProps<'button'> {
 
 export function Botao({
   variante = 'primario',
+  tamanho = 'normal',
   carregando = false,
   larguraTotal = false,
   type = 'button',
@@ -34,10 +43,11 @@ export function Botao({
       disabled={disabled || carregando}
       aria-busy={carregando || undefined}
       className={cn(
-        'inline-flex min-h-11 items-center justify-center gap-2 rounded-xl px-4 text-sm font-semibold transition-colors',
-        'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-marca',
+        'inline-flex items-center justify-center gap-2 font-semibold transition',
+        'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary',
         'disabled:cursor-not-allowed disabled:opacity-60',
         estilos[variante],
+        tamanhos[tamanho],
         larguraTotal && 'w-full',
         className,
       )}

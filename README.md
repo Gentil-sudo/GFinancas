@@ -71,6 +71,9 @@ O banco é criado pelos arquivos de [supabase/migrations/](supabase/migrations/)
 1. `20261121120000_schema_inicial.sql`: tabelas, RLS, triggers (updated_at, status, auditoria),
    view `resumo_mensal` e a função `gerar_parcelas`.
 2. `20261121120100_categorias_padrao.sql`: categorias padrão criadas no cadastro.
+3. `20261121130000_perfis.sql`: perfil do usuário (nome do "Olá" e tema escolhido).
+
+Cada arquivo roda **uma vez só**. Quando chegar uma migration nova, rode só ela.
 
 Para rodar: no painel do Supabase, menu lateral **SQL Editor** → **New query** → cole o conteúdo
 do arquivo → **Run** (ou Ctrl+Enter). Deve aparecer "Success. No rows returned".
@@ -117,3 +120,10 @@ supabase/
 - No front: some com `somar()` e arredonde com `round2()` de [src/lib/format.ts](src/lib/format.ts),
   nunca com float solto. Mostre com `formatBRL()`.
 - Entrada do usuário: `parseValor()` aceita vírgula ou ponto (`"1.234,56"`).
+
+## Temas
+
+Três temas (Clareza, Noite, Lavanda) + Automático, escolhidos em **Configurações → Aparência**
+(PLANO §4.0.1). As cores ficam só em [src/index.css](src/index.css), como variáveis por
+`[data-theme]`; os componentes usam apenas os tokens (`bg-surface`, `text-muted`, `bg-primary`…).
+A escolha é salva no perfil (Supabase) e no navegador (para não piscar ao abrir).

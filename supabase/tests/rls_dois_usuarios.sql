@@ -92,8 +92,17 @@ begin
   select count(*) into n from public.historico where tabela = 'lancamentos';
   testes := array_append(testes, 'A: histórico registrou os 14 lançamentos'); oks := oks || (n = 14);
 
+  insert into public.perfis (nome, tema) values ('Pessoa A', 'noite');
+
   -- ---------------------------------------------------------------- como B
   perform set_config('request.jwt.claims', json_build_object('sub', b, 'role', 'authenticated')::text, true);
+
+  select count(*) into n from public.perfis;
+  testes := array_append(testes, 'B: não vê o perfil de A'); oks := oks || (n = 0);
+
+  update public.perfis set tema = 'lavanda' where user_id = a;
+  get diagnostics n = row_count;
+  testes := array_append(testes, 'B: não consegue alterar o perfil de A'); oks := oks || (n = 0);
 
   select count(*) into n from public.lancamentos;
   testes := array_append(testes, 'B: não vê lançamentos de A'); oks := oks || (n = 0);

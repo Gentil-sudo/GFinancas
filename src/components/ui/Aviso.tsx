@@ -5,10 +5,10 @@ import { cn } from '@/lib/cn'
 type Tipo = 'erro' | 'sucesso' | 'atencao' | 'info'
 
 const config: Record<Tipo, { icone: LucideIcon; classe: string }> = {
-  erro: { icone: CircleAlert, classe: 'border-rose-200 bg-saida-suave text-rose-900' },
-  sucesso: { icone: CircleCheck, classe: 'border-emerald-200 bg-entrada-suave text-emerald-900' },
-  atencao: { icone: TriangleAlert, classe: 'border-amber-200 bg-pendente-suave text-amber-900' },
-  info: { icone: Info, classe: 'border-slate-200 bg-slate-50 text-slate-700' },
+  erro: { icone: CircleAlert, classe: 'border-danger/30 bg-danger-soft text-danger' },
+  sucesso: { icone: CircleCheck, classe: 'border-success/40 bg-surface text-success' },
+  atencao: { icone: TriangleAlert, classe: 'border-warning/30 bg-warning-soft text-warning' },
+  info: { icone: Info, classe: 'border-border bg-bg text-muted' },
 }
 
 /** Caixa de mensagem com ícone (a cor nunca é a única pista: sempre há ícone e texto). */
@@ -26,7 +26,7 @@ export function Aviso({
     <div
       role={tipo === 'erro' ? 'alert' : 'status'}
       className={cn(
-        'flex items-start gap-2 rounded-xl border px-3 py-2.5 text-sm',
+        'flex items-start gap-2 rounded-2xl border px-3.5 py-3 text-sm font-medium',
         classe,
         className,
       )}

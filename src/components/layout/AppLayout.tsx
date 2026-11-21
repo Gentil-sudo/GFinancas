@@ -1,22 +1,31 @@
-import { LogOut, Settings } from 'lucide-react'
-import { NavLink, Outlet } from 'react-router'
+import { LogOut, Plus } from 'lucide-react'
+import { Link, NavLink, Outlet } from 'react-router'
 import { useAuth } from '@/features/auth/authContext'
 import { cn } from '@/lib/cn'
 import { Marca } from './Marca'
 import { itensNav } from './navegacao'
 
 /**
- * Layout base: menu lateral no desktop (md+) e barra inferior no celular.
+ * Layout das telas principais: menu lateral no desktop (md+); no celular, barra inferior
+ * com o botão "+" no centro (Novo lançamento).
  */
 export function AppLayout() {
   const { user, sair } = useAuth()
+  const doCelular = itensNav.filter((i) => i.noCelular)
 
   return (
     <div className="min-h-dvh md:flex">
       {/* Menu lateral — desktop */}
-      <aside className="sticky top-0 hidden h-dvh w-60 shrink-0 flex-col border-r border-slate-200 bg-white px-3 py-5 md:flex">
-        <Marca className="mb-6 px-3" />
-        <nav className="flex flex-col gap-1">
+      <aside className="sticky top-0 hidden h-dvh w-64 shrink-0 flex-col border-r border-border bg-surface px-4 py-6 md:flex">
+        <Marca className="mb-6 px-2" />
+        <Link
+          to="/lancamentos/novo"
+          className="mb-6 flex min-h-11 items-center justify-center gap-2 rounded-xl bg-primary px-4 text-sm font-semibold text-on-primary hover:opacity-90"
+        >
+          <Plus className="size-5" aria-hidden />
+          Novo lançamento
+        </Link>
+        <nav className="flex flex-col gap-1" aria-label="Menu principal">
           {itensNav.map(({ to, label, icone: Icone }) => (
             <NavLink
               key={to}
@@ -24,8 +33,9 @@ export function AppLayout() {
               end={to === '/'}
               className={({ isActive }) =>
                 cn(
-                  'flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-slate-600 transition-colors hover:bg-slate-100 hover:text-slate-900',
-                  isActive && 'bg-marca-suave text-marca hover:bg-marca-suave hover:text-marca',
+                  'flex min-h-11 items-center gap-3 rounded-xl px-3 text-sm font-medium text-muted transition-colors hover:bg-track hover:text-text',
+                  isActive &&
+                    'bg-primary-soft font-semibold text-primary hover:bg-primary-soft hover:text-primary',
                 )
               }
             >
@@ -35,14 +45,14 @@ export function AppLayout() {
           ))}
         </nav>
 
-        <div className="mt-auto border-t border-slate-200 px-3 pt-4">
-          <p className="truncate text-xs text-slate-500" title={user?.email}>
+        <div className="mt-auto border-t border-border px-2 pt-4">
+          <p className="truncate text-xs text-muted" title={user?.email}>
             {user?.email}
           </p>
           <button
             type="button"
             onClick={sair}
-            className="mt-2 -ml-2 flex items-center gap-2 rounded-lg px-2 py-2 text-sm font-medium text-slate-600 hover:bg-slate-100 hover:text-slate-900"
+            className="mt-2 -ml-2 flex min-h-11 items-center gap-2 rounded-xl px-2 text-sm font-medium text-muted hover:bg-track hover:text-text"
           >
             <LogOut className="size-4" aria-hidden />
             Sair
@@ -50,53 +60,59 @@ export function AppLayout() {
         </div>
       </aside>
 
-      <div className="flex min-w-0 flex-1 flex-col">
-        {/* Topo — celular */}
-        <header className="sticky top-0 z-10 flex items-center justify-between border-b border-slate-200 bg-white/90 px-4 py-3 backdrop-blur md:hidden">
-          <Marca />
-          <NavLink
-            to="/configuracoes"
-            aria-label="Configurações"
-            className={({ isActive }) =>
-              cn(
-                'rounded-full p-2 text-slate-600 hover:bg-slate-100',
-                isActive && 'bg-marca-suave text-marca',
-              )
-            }
-          >
-            <Settings className="size-5" aria-hidden />
-          </NavLink>
-        </header>
-
-        <main className="mx-auto w-full max-w-5xl flex-1 px-4 pt-4 pb-28 md:px-8 md:pt-8 md:pb-10">
-          <Outlet />
-        </main>
-      </div>
+      <main className="mx-auto flex w-full max-w-2xl min-w-0 flex-1 flex-col gap-[18px] px-5 pt-6 pb-32 md:px-8 md:pt-10 md:pb-16">
+        <Outlet />
+      </main>
 
       {/* Barra inferior — celular */}
       <nav
-        className="fixed inset-x-0 bottom-0 z-10 grid grid-cols-5 border-t border-slate-200 bg-white pb-[env(safe-area-inset-bottom)] md:hidden"
         aria-label="Menu principal"
+        className="fixed inset-x-0 bottom-0 z-20 flex items-center justify-around border-t border-border bg-surface px-3 pt-2.5 pb-[calc(0.75rem+env(safe-area-inset-bottom))] md:hidden"
       >
-        {itensNav
-          .filter((i) => i.noCelular)
-          .map(({ to, label, icone: Icone }) => (
-            <NavLink
-              key={to}
-              to={to}
-              end={to === '/'}
-              className={({ isActive }) =>
-                cn(
-                  'flex min-h-16 flex-col items-center justify-center gap-1 text-[11px] font-medium text-slate-500',
-                  isActive && 'text-marca',
-                )
-              }
-            >
-              <Icone className="size-6" aria-hidden />
-              <span className="max-w-full truncate px-0.5">{label}</span>
-            </NavLink>
-          ))}
+        {doCelular.slice(0, 2).map((item) => (
+          <ItemBarra key={item.to} {...item} />
+        ))}
+        <BotaoNovo className="-mt-7" />
+        {doCelular.slice(2).map((item) => (
+          <ItemBarra key={item.to} {...item} />
+        ))}
       </nav>
+
+      {/* Botão flutuante — desktop */}
+      <BotaoNovo className="fixed right-8 bottom-8 hidden md:flex" />
     </div>
+  )
+}
+
+function ItemBarra({ to, label, icone: Icone }: (typeof itensNav)[number]) {
+  return (
+    <NavLink
+      to={to}
+      end={to === '/'}
+      className={({ isActive }) =>
+        cn(
+          'flex min-h-11 min-w-14 flex-col items-center justify-center gap-1 text-[11px] font-medium text-muted',
+          isActive && 'font-bold text-primary',
+        )
+      }
+    >
+      <Icone className="size-[22px]" aria-hidden />
+      <span>{label}</span>
+    </NavLink>
+  )
+}
+
+function BotaoNovo({ className }: { className?: string }) {
+  return (
+    <Link
+      to="/lancamentos/novo"
+      aria-label="Novo lançamento"
+      className={cn(
+        'z-20 flex size-14 shrink-0 items-center justify-center rounded-full bg-primary text-on-primary shadow-lg transition hover:opacity-90',
+        className,
+      )}
+    >
+      <Plus className="size-[26px]" strokeWidth={2.4} aria-hidden />
+    </Link>
   )
 }
