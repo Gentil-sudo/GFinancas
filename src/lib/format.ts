@@ -16,7 +16,7 @@ export function somar(valores: Array<number | string | null | undefined>): numbe
   return centavos / 100
 }
 
-/** 1234.5 → "R$ 1.234,50". Aceita string porque o Postgres devolve `numeric` como texto. */
+/** 1234.5 → "R$ 1.234,50". Aceita string também (ex.: valores lidos de um backup). */
 export function formatBRL(valor: number | string | null | undefined): string {
   return brl.format(round2(Number(valor ?? 0)))
 }

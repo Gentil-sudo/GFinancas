@@ -1,4 +1,5 @@
 import { createClient } from '@supabase/supabase-js'
+import type { Database } from '@/types/db'
 
 const url = import.meta.env.VITE_SUPABASE_URL
 const anonKey = import.meta.env.VITE_SUPABASE_ANON_KEY
@@ -15,10 +16,8 @@ if (!supabaseConfigurado) {
 /**
  * Cliente único do Supabase. Usa só a chave pública (anon) — a segurança vem do RLS no banco.
  * A sessão fica salva no navegador e é renovada sozinha, então não é preciso logar toda hora.
- *
- * Os tipos do banco (`Database`) serão adicionados na Fase 2.
  */
-export const supabase = createClient(
+export const supabase = createClient<Database>(
   url ?? 'http://localhost:54321',
   anonKey ?? 'chave-nao-configurada',
   {
