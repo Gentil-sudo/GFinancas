@@ -106,7 +106,7 @@ function AvisoSupabase() {
       <TriangleAlert className="mt-0.5 size-4 shrink-0" aria-hidden />
       <p>
         Supabase não configurado: copie <code>.env.example</code> para <code>.env.local</code>,
-        preencha a URL e a anon key e reinicie o <code>npm run dev</code>.
+        preencha a URL e a publishable key e reinicie o <code>npm run dev</code>.
       </p>
     </div>
   )
