@@ -49,6 +49,21 @@ npm run dev                  # abre em http://localhost:5173
 
 > O `.env.local` está no `.gitignore` e não vai para o Git. O `.env.example` é só um modelo.
 
+## Autenticação (links de e-mail)
+
+Os e-mails de confirmação de cadastro e de "esqueci minha senha" trazem um link que precisa
+voltar para o app. No painel do Supabase:
+
+1. Menu lateral **Authentication** → **URL Configuration**.
+2. **Site URL**: `http://localhost:5173` → **Save changes**.
+3. **Redirect URLs** → **Add URL** → `http://localhost:5173/**` → **Save URLs**.
+
+Quando o app for para a Vercel (Fase 7), troque a Site URL pelo domínio da Vercel e adicione
+`https://SEU-DOMINIO.vercel.app/**` nas Redirect URLs (mantenha a do localhost para desenvolver).
+
+> O serviço de e-mail embutido do Supabase envia **poucos e-mails por hora** (bom para testes,
+> não para uso intenso). Se aparecer "Limite de e-mails atingido", espere um pouco.
+
 ## Banco de dados
 
 O banco é criado pelos arquivos de [supabase/migrations/](supabase/migrations/), **na ordem do nome**:

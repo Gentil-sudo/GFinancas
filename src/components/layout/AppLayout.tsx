@@ -1,13 +1,16 @@
-import { Settings, TriangleAlert, Wallet } from 'lucide-react'
+import { LogOut, Settings } from 'lucide-react'
 import { NavLink, Outlet } from 'react-router'
+import { useAuth } from '@/features/auth/authContext'
 import { cn } from '@/lib/cn'
-import { supabaseConfigurado } from '@/lib/supabase'
+import { Marca } from './Marca'
 import { itensNav } from './navegacao'
 
 /**
  * Layout base: menu lateral no desktop (md+) e barra inferior no celular.
  */
 export function AppLayout() {
+  const { user, sair } = useAuth()
+
   return (
     <div className="min-h-dvh md:flex">
       {/* Menu lateral — desktop */}
@@ -31,6 +34,20 @@ export function AppLayout() {
             </NavLink>
           ))}
         </nav>
+
+        <div className="mt-auto border-t border-slate-200 px-3 pt-4">
+          <p className="truncate text-xs text-slate-500" title={user?.email}>
+            {user?.email}
+          </p>
+          <button
+            type="button"
+            onClick={sair}
+            className="mt-2 -ml-2 flex items-center gap-2 rounded-lg px-2 py-2 text-sm font-medium text-slate-600 hover:bg-slate-100 hover:text-slate-900"
+          >
+            <LogOut className="size-4" aria-hidden />
+            Sair
+          </button>
+        </div>
       </aside>
 
       <div className="flex min-w-0 flex-1 flex-col">
@@ -50,8 +67,6 @@ export function AppLayout() {
             <Settings className="size-5" aria-hidden />
           </NavLink>
         </header>
-
-        {!supabaseConfigurado && <AvisoSupabase />}
 
         <main className="mx-auto w-full max-w-5xl flex-1 px-4 pt-4 pb-28 md:px-8 md:pt-8 md:pb-10">
           <Outlet />
@@ -82,32 +97,6 @@ export function AppLayout() {
             </NavLink>
           ))}
       </nav>
-    </div>
-  )
-}
-
-function Marca({ className }: { className?: string }) {
-  return (
-    <div className={cn('flex items-center gap-2 font-semibold text-slate-900', className)}>
-      <span className="grid size-8 place-items-center rounded-lg bg-marca text-white">
-        <Wallet className="size-4.5" aria-hidden />
-      </span>
-      Minhas Finanças
-    </div>
-  )
-}
-
-function AvisoSupabase() {
-  return (
-    <div
-      role="alert"
-      className="flex items-start gap-2 border-b border-amber-200 bg-pendente-suave px-4 py-2.5 text-sm text-amber-900 md:px-8"
-    >
-      <TriangleAlert className="mt-0.5 size-4 shrink-0" aria-hidden />
-      <p>
-        Supabase não configurado: copie <code>.env.example</code> para <code>.env.local</code>,
-        preencha a URL e a publishable key e reinicie o <code>npm run dev</code>.
-      </p>
     </div>
   )
 }
