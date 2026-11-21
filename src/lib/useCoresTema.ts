@@ -19,6 +19,9 @@ export function useCoresTema() {
       border: ler('--border'),
       surface: ler('--surface'),
       fonte: ler('--fonte-texto'),
+      primary: ler('--primary'),
+      /** Cores das séries categóricas (uma por compra), em ordem fixa. */
+      series: [1, 2, 3, 4, 5, 6].map((i) => ler(`--serie-${i}`)),
     }
   }, [temaAplicado])
 }

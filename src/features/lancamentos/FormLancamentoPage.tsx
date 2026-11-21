@@ -1,9 +1,9 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { parseISO } from 'date-fns'
-import { FileQuestion, WifiOff, X } from 'lucide-react'
-import { useCallback, useEffect, useId, useMemo, useState, type ReactNode } from 'react'
+import { FileQuestion, Layers, WifiOff, X } from 'lucide-react'
+import { useId, useMemo, useState, type ReactNode } from 'react'
 import { Controller, useForm, useWatch } from 'react-hook-form'
-import { useBlocker, useNavigate, useParams, useSearchParams } from 'react-router'
+import { useParams, useSearchParams } from 'react-router'
 import { z } from 'zod'
 import { Botao } from '@/components/ui/Botao'
 import { MensagemCampo } from '@/components/ui/Campo'
@@ -24,6 +24,7 @@ import {
 } from '@/lib/format'
 import { useMes } from '@/lib/mesContext'
 import { useOnline } from '@/lib/online'
+import { useSaidaFormulario } from '@/lib/useSaidaFormulario'
 import type { Lancamento, StatusLancamento, TipoLancamento } from '@/types/db'
 import {
   normalizarTexto,
@@ -140,7 +141,6 @@ const TITULOS: Record<Modo, string> = {
 }
 
 function Formulario({ modo, original }: { modo: Modo; original: Lancamento | null }) {
-  const navigate = useNavigate()
   const [params] = useSearchParams()
   const { mes } = useMes()
   const online = useOnline()
@@ -167,33 +167,17 @@ function Formulario({ modo, original }: { modo: Modo; original: Lancamento | nul
   })
 
   // ---------- aviso ao sair com alterações não salvas (PLANO §5.6)
-  const [concluido, setConcluido] = useState(false)
-  const blocker = useBlocker(
-    ({ currentLocation, nextLocation }) =>
-      isDirty && !concluido && currentLocation.pathname !== nextLocation.pathname,
-  )
-  useEffect(() => {
-    if (blocker.state !== 'blocked') return
-    if (window.confirm('Você tem alterações não salvas. Sair e descartar?')) blocker.proceed()
-    else blocker.reset()
-  }, [blocker])
-  useEffect(() => {
-    if (!isDirty) return
-    const aviso = (e: BeforeUnloadEvent) => e.preventDefault()
-    window.addEventListener('beforeunload', aviso)
-    return () => window.removeEventListener('beforeunload', aviso)
-  }, [isDirty])
+  const { concluir, fechar } = useSaidaFormulario(isDirty, '/lancamentos')
 
-  const voltar = useCallback(() => {
-    const idx = (window.history.state as { idx?: number } | null)?.idx ?? 0
-    if (idx > 0) navigate(-1)
-    else navigate('/lancamentos', { replace: true })
-  }, [navigate])
-
-  // Depois de salvar, sai da tela (o aviso de alterações não salvas já não se aplica).
-  useEffect(() => {
-    if (concluido) voltar()
-  }, [concluido, voltar])
+  /** "É uma compra parcelada?": leva o que já foi digitado para o cadastro de parcelas. */
+  function irParaParcelas() {
+    const p = new URLSearchParams()
+    const v = getValues()
+    if (v.descricao.trim()) p.set('descricao', v.descricao.trim())
+    if (parseValor(v.valor)) p.set('valor', v.valor)
+    if (v.categoria_id) p.set('categoria', v.categoria_id)
+    concluir(`/parcelas/nova?${p.toString()}`)
+  }
 
   // ---------- categorias do tipo escolhido
   const categoriasDoTipo = useMemo(
@@ -269,7 +253,7 @@ function Formulario({ modo, original }: { modo: Modo; original: Lancamento | nul
 
     const resultado = modo === 'editar' ? await editar(original!, dados) : await criar(dados)
     // Se não salvou, o formulário continua preenchido para tentar de novo.
-    if (resultado) setConcluido(true)
+    if (resultado) concluir()
   }
 
   const opcoesStatus: StatusLancamento[] = ['pago', 'pendente', 'parcial']
@@ -280,7 +264,7 @@ function Formulario({ modo, original }: { modo: Modo; original: Lancamento | nul
         <h1 className="text-[26px] font-bold tracking-tight">{TITULOS[modo]}</h1>
         <button
           type="button"
-          onClick={voltar}
+          onClick={fechar}
           aria-label="Fechar"
           className="grid size-11 shrink-0 place-items-center rounded-full border border-border bg-surface text-text hover:bg-track"
         >
@@ -472,6 +456,16 @@ function Formulario({ modo, original }: { modo: Modo; original: Lancamento | nul
             )}
           />
         </fieldset>
+
+        {modo === 'novo' && tipo === 'saida' && (
+          <button
+            type="button"
+            onClick={irParaParcelas}
+            className="-mt-1 flex min-h-11 items-center gap-2 self-start text-sm font-semibold text-primary hover:underline"
+          >
+            <Layers className="size-4" aria-hidden />É uma compra parcelada? Cadastrar em parcelas
+          </button>
+        )}
 
         {status === 'parcial' && (
           <CampoTexto

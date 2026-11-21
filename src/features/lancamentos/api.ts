@@ -1,9 +1,9 @@
-import { useQuery, useQueryClient, type QueryClient } from '@tanstack/react-query'
+import { useQuery } from '@tanstack/react-query'
 import { addDays, format } from 'date-fns'
 import { useCallback } from 'react'
-import { toast } from 'sonner'
 import { formatBRL } from '@/lib/format'
 import { supabase } from '@/lib/supabase'
+import { useExecutarAcao } from '@/lib/useExecutarAcao'
 import type { Lancamento, ResumoMensal, TablesInsert, TablesUpdate } from '@/types/db'
 
 // =====================================================================
@@ -17,13 +17,6 @@ export const chavesLancamentos = {
   vencimentos: (limite: string) => ['lancamentos', 'vencimentos', limite] as const,
   sugestoes: ['lancamentos', 'sugestoes'] as const,
   resumo: (de: string, ate: string) => ['resumo', de, ate] as const,
-}
-
-export function invalidarLancamentos(qc: QueryClient) {
-  return Promise.all([
-    qc.invalidateQueries({ queryKey: chavesLancamentos.tudo }),
-    qc.invalidateQueries({ queryKey: ['resumo'] }),
-  ])
 }
 
 /** Lançamentos de um mês (sem os da lixeira), do mais recente para o mais antigo. */
@@ -185,62 +178,12 @@ async function marcarExcluidos(ids: string[], excluido: boolean) {
   if (error) throw error
 }
 
-interface OpcoesExecucao<T> {
-  sucesso: string
-  /** Se informado, o toast ganha o botão "Desfazer". */
-  desfazer?: (resultado: T) => Promise<unknown>
-}
-
 /**
- * Ações sobre lançamentos. Cada uma:
- *  - recusa se estiver offline (nada de "fingir que salvou");
- *  - mostra "Salvo ✓" só DEPOIS da confirmação do servidor, com "Desfazer";
- *  - em erro, mostra "Não foi salvo — tentar de novo" e devolve `undefined`.
+ * Ações sobre lançamentos. Seguem o PLANO §5 via useExecutarAcao: "Salvo ✓" só depois do
+ * servidor, com "Desfazer"; offline ou erro → nada é fingido e o formulário fica preenchido.
  */
 export function useAcoesLancamento() {
-  const qc = useQueryClient()
-
-  const executar = useCallback(
-    async function tentar<T>(
-      acao: () => Promise<T>,
-      opcoes: OpcoesExecucao<T>,
-    ): Promise<T | undefined> {
-      if (!navigator.onLine) {
-        toast.error('Sem internet: nada foi salvo. Tente quando a conexão voltar.')
-        return undefined
-      }
-      try {
-        const resultado = await acao()
-        await invalidarLancamentos(qc)
-        const desfazer = opcoes.desfazer
-        toast.success(
-          opcoes.sucesso,
-          desfazer && {
-            action: {
-              label: 'Desfazer',
-              onClick: () => {
-                desfazer(resultado)
-                  .then(() => invalidarLancamentos(qc))
-                  .then(() => toast.success('Desfeito ✓'))
-                  .catch((e) => {
-                    console.error(e)
-                    toast.error('Não foi possível desfazer. Tente de novo.')
-                  })
-              },
-            },
-          },
-        )
-        return resultado
-      } catch (e) {
-        console.error('[lancamentos]', e)
-        toast.error('Não foi salvo — tentar de novo', {
-          action: { label: 'Tentar de novo', onClick: () => void tentar(acao, opcoes) },
-        })
-        return undefined
-      }
-    },
-    [qc],
-  )
+  const executar = useExecutarAcao()
 
   const criar = useCallback(
     (dados: DadosLancamento) =>

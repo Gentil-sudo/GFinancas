@@ -10,7 +10,11 @@ import { somarMeses } from '@/lib/format'
 import { useMes } from '@/lib/mesContext'
 import { useDeslizar } from '@/lib/useDeslizar'
 import type { ResumoMensal } from '@/types/db'
+import { useMetas } from '@/features/metas/api'
+import { useComprasParceladas } from '@/features/parcelas/api'
+import { proximaQueda } from '@/features/parcelas/calculos'
 import { CardContas } from './CardContas'
+import { CardMetas } from './CardMetas'
 import { CardSobra } from './CardSobra'
 import { CardsPatrimonio } from './CardsPatrimonio'
 import { ParaOndeFoi } from './ParaOndeFoi'
@@ -54,6 +58,8 @@ export function DashboardPage() {
 
   const resumo = useResumo(meses[0], mes)
   const lancamentos = useLancamentosMes(mes)
+  const { resumos: compras } = useComprasParceladas()
+  const { data: metas } = useMetas()
 
   const atual = resumo.data?.find((r) => r.competencia === mes) ?? resumoVazio(mes)
   const anterior = resumo.data?.find((r) => r.competencia === mesAnterior)
@@ -99,7 +105,12 @@ export function DashboardPage() {
           <CardContas resumo={atual} />
           <ProximosVencimentos />
           <ParaOndeFoi lancamentos={lancamentos.data ?? []} />
-          <CardsPatrimonio resumo={atual} lancamentos={lancamentos.data ?? []} />
+          <CardsPatrimonio
+            resumo={atual}
+            lancamentos={lancamentos.data ?? []}
+            queda={proximaQueda(compras, mes)}
+          />
+          <CardMetas metas={metas ?? []} mes={mes} />
           <Suspense fallback={<Esqueleto className="h-72" />}>
             <GraficoEvolucao meses={meses} resumos={resumo.data ?? []} />
           </Suspense>

@@ -1,15 +1,18 @@
 import { Layers, TrendingUp, type LucideIcon } from 'lucide-react'
 import { Link } from 'react-router'
-import { formatBRL, somar } from '@/lib/format'
+import { formatBRL, formatMesCurto, somar } from '@/lib/format'
 import type { Lancamento, ResumoMensal } from '@/types/db'
 
 /** Dois cards pequenos: parcelas do mês e total investido (com o TOTAL do mês). */
 export function CardsPatrimonio({
   resumo,
   lancamentos,
+  queda,
 }: {
   resumo: ResumoMensal
   lancamentos: Lancamento[]
+  /** Quando o total de parcelas diminui (ver parcelas/calculos.proximaQueda). */
+  queda: { mes: string; valor: number } | null
 }) {
   const parcelas = lancamentos.filter((l) => l.compra_parcelada_id)
   const totalParcelas = somar(parcelas.map((l) => l.valor))
@@ -24,7 +27,11 @@ export function CardsPatrimonio({
         detalhe={
           parcelas.length === 0
             ? 'Nenhuma parcela neste mês'
-            : `${parcelas.length} ${parcelas.length === 1 ? 'parcela' : 'parcelas'}`
+            : queda
+              ? queda.valor > 0
+                ? `Cai para ${formatBRL(queda.valor)} em ${formatMesCurto(queda.mes)}`
+                : `Acabam em ${formatMesCurto(queda.mes)}`
+              : `${parcelas.length} ${parcelas.length === 1 ? 'parcela' : 'parcelas'}`
         }
       />
       <MiniCard

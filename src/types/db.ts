@@ -268,6 +268,47 @@ export type Database = {
         /** Quantidade de parcelas criadas. */
         Returns: number
       }
+      criar_compra_parcelada: {
+        Args: {
+          p_descricao: string
+          p_valor_parcela: number
+          p_total_parcelas: number
+          /** Dia 1 do mês da 1ª parcela. */
+          p_primeira_competencia: string
+          p_dia_vencimento?: number | null
+          p_categoria_id?: string | null
+          p_meta_id?: string | null
+          p_observacao?: string | null
+          /** Compra em andamento: gera só desta parcela em diante. */
+          p_parcela_atual?: number
+        }
+        /** id da compra criada. */
+        Returns: string
+      }
+      atualizar_compra_parcelada: {
+        Args: {
+          p_compra_id: string
+          p_descricao: string
+          p_valor_parcela: number
+          p_total_parcelas: number
+          p_dia_vencimento?: number | null
+          p_categoria_id?: string | null
+          p_meta_id?: string | null
+          p_observacao?: string | null
+          /** false = muda só as parcelas não pagas. */
+          p_incluir_pagas?: boolean
+        }
+        Returns: undefined
+      }
+      cancelar_compra_parcelada: {
+        Args: { p_compra_id: string }
+        /** Instante do cancelamento (para desfazer). */
+        Returns: string
+      }
+      restaurar_compra_parcelada: {
+        Args: { p_compra_id: string; p_quando: string }
+        Returns: undefined
+      }
       seed_categorias_padrao: {
         Args: Record<PropertyKey, never>
         Returns: undefined

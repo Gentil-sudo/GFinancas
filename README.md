@@ -72,11 +72,20 @@ O banco é criado pelos arquivos de [supabase/migrations/](supabase/migrations/)
    view `resumo_mensal` e a função `gerar_parcelas`.
 2. `20261121120100_categorias_padrao.sql`: categorias padrão criadas no cadastro.
 3. `20261121130000_perfis.sql`: perfil do usuário (nome do "Olá" e tema escolhido).
+4. `20261121140000_compras_parceladas_rpc.sql`: criar/editar/cancelar compras parceladas numa
+   transação só (nunca fica uma compra pela metade).
 
 Cada arquivo roda **uma vez só**. Quando chegar uma migration nova, rode só ela.
 
 Para rodar: no painel do Supabase, menu lateral **SQL Editor** → **New query** → cole o conteúdo
 do arquivo → **Run** (ou Ctrl+Enter). Deve aparecer "Success. No rows returned".
+
+### Testes no SQL Editor
+
+- [supabase/tests/rls_dois_usuarios.sql](supabase/tests/rls_dois_usuarios.sql): isolamento entre usuários.
+- [supabase/tests/compras_parceladas.sql](supabase/tests/compras_parceladas.sql): criar, editar, cancelar e desfazer compras.
+
+Ambos criam usuários fictícios, testam e apagam tudo no final.
 
 ### Testando o isolamento entre usuários
 

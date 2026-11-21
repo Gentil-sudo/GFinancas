@@ -64,6 +64,13 @@
   /* Gráficos: cores validadas para daltonismo (skill dataviz, validate_palette.js) */
   --grafico-entrada: #2f4fd8;
   --grafico-saida: #b91c1c;
+  /* Séries (uma cor por compra): paleta categórica validada (dataviz), ordem fixa */
+  --serie-1: #2a78d6;
+  --serie-2: #eb6834;
+  --serie-3: #1baf7a;
+  --serie-4: #eda100;
+  --serie-5: #e87ba4;
+  --serie-6: #008300;
 }
 
 [data-theme='noite'] {
@@ -92,6 +99,12 @@
   /* Tons um pouco mais fechados que primary/danger: passam na faixa de luminosidade do escuro */
   --grafico-entrada: #12a594;
   --grafico-saida: #ef4444;
+  --serie-1: #3987e5;
+  --serie-2: #d95926;
+  --serie-3: #199e70;
+  --serie-4: #c98500;
+  --serie-5: #d55181;
+  --serie-6: #0ca30c;
 }
 
 [data-theme='lavanda'] {
@@ -119,6 +132,12 @@
   --raio-card: 24px;
   --grafico-entrada: #6d3fd1;
   --grafico-saida: #c0362c;
+  --serie-1: #2a78d6;
+  --serie-2: #eb6834;
+  --serie-3: #1baf7a;
+  --serie-4: #eda100;
+  --serie-5: #e87ba4;
+  --serie-6: #008300;
 }
 
 @layer base {

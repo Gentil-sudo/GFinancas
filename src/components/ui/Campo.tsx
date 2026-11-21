@@ -83,3 +83,28 @@ export function CampoSenha(props: Omit<Props, 'type' | 'direita'>) {
     />
   )
 }
+
+/** Rótulo + qualquer controle (input, select, textarea) + erro/dica. */
+export function CampoRotulado({
+  rotulo,
+  id,
+  erro,
+  dica,
+  children,
+}: {
+  rotulo: string
+  id: string
+  erro?: string
+  dica?: string
+  children: ReactNode
+}) {
+  return (
+    <div className="flex flex-col gap-1.5">
+      <label htmlFor={id} className={classeRotulo}>
+        {rotulo}
+      </label>
+      {children}
+      <MensagemCampo erro={erro} dica={dica} />
+    </div>
+  )
+}

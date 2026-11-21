@@ -12,7 +12,9 @@ import { DashboardPage } from '@/features/dashboard/DashboardPage'
 import { InvestimentosPage } from '@/features/investimentos/InvestimentosPage'
 import { FormLancamentoPage } from '@/features/lancamentos/FormLancamentoPage'
 import { LancamentosPage } from '@/features/lancamentos/LancamentosPage'
+import { FormMetaPage } from '@/features/metas/FormMetaPage'
 import { MetasPage } from '@/features/metas/MetasPage'
+import { FormCompraPage } from '@/features/parcelas/FormCompraPage'
 import { ParcelasPage } from '@/features/parcelas/ParcelasPage'
 
 export const router = createBrowserRouter([
@@ -50,13 +52,17 @@ export const router = createBrowserRouter([
                   { path: 'configuracoes', element: <ConfiguracoesPage /> },
                 ],
               },
-              // Formulário em tela cheia (sem a barra de navegação)
+              // Formulários em tela cheia (sem a barra de navegação)
               { path: '/lancamentos/novo', element: <FormLancamentoPage modo="novo" /> },
               { path: '/lancamentos/:id/editar', element: <FormLancamentoPage modo="editar" /> },
               {
                 path: '/lancamentos/:id/duplicar',
                 element: <FormLancamentoPage modo="duplicar" />,
               },
+              { path: '/parcelas/nova', element: <FormCompraPage modo="nova" /> },
+              { path: '/parcelas/:id/editar', element: <FormCompraPage modo="editar" /> },
+              { path: '/metas/nova', element: <FormMetaPage modo="nova" /> },
+              { path: '/metas/:id/editar', element: <FormMetaPage modo="editar" /> },
             ],
           },
         ],
