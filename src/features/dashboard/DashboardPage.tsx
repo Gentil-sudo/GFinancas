@@ -1,9 +1,12 @@
-import { lazy, Suspense, useMemo } from 'react'
+import { ChevronRight, DatabaseBackup, Rocket } from 'lucide-react'
+import { lazy, Suspense, useMemo, useState } from 'react'
+import { Link } from 'react-router'
 import { Aviso } from '@/components/ui/Aviso'
 import { AvatarUsuario } from '@/components/ui/CabecalhoPagina'
 import { Esqueleto } from '@/components/ui/Esqueleto'
 import { SeletorMes } from '@/components/ui/SeletorMes'
 import { useAuth } from '@/features/auth/authContext'
+import { diasDesdeBackup, textoUltimoBackup } from '@/features/configuracoes/backup'
 import { useLancamentosMes, useResumo } from '@/features/lancamentos/api'
 import { nomeExibicao, usePerfil } from '@/features/perfil/api'
 import { somarMeses } from '@/lib/format'
@@ -63,6 +66,12 @@ export function DashboardPage() {
 
   const atual = resumo.data?.find((r) => r.competencia === mes) ?? resumoVazio(mes)
   const anterior = resumo.data?.find((r) => r.competencia === mesAnterior)
+  const semNada =
+    !lancamentos.isLoading &&
+    (lancamentos.data?.length ?? 0) === 0 &&
+    compras.length === 0 &&
+    (metas?.length ?? 0) === 0
+  const [diasBackup] = useState(diasDesdeBackup)
   const carregando = resumo.isLoading || lancamentos.isLoading
   const erro = resumo.isError || lancamentos.isError
 
@@ -101,6 +110,21 @@ export function DashboardPage() {
         </div>
       ) : (
         <>
+          {semNada && (
+            <Link
+              to="/configuracao-inicial"
+              className="flex items-center gap-3 rounded-card border border-primary bg-primary-soft p-4 text-sm"
+            >
+              <Rocket className="size-6 shrink-0 text-primary" aria-hidden />
+              <span className="flex-1">
+                <strong className="block text-text">Primeira vez por aqui?</strong>
+                <span className="text-muted">
+                  Faça a configuração inicial: parcelas em andamento, metas e investimentos.
+                </span>
+              </span>
+              <ChevronRight className="size-5 text-primary" aria-hidden />
+            </Link>
+          )}
           <CardSobra atual={atual} anterior={anterior} mesAnterior={mesAnterior} />
           <CardContas resumo={atual} />
           <ProximosVencimentos />
@@ -114,6 +138,15 @@ export function DashboardPage() {
           <Suspense fallback={<Esqueleto className="h-72" />}>
             <GraficoEvolucao meses={meses} resumos={resumo.data ?? []} />
           </Suspense>
+          {!semNada && (diasBackup === null || diasBackup > 30) && (
+            <Link
+              to="/configuracoes/backup"
+              className="flex min-h-11 items-center justify-center gap-1.5 text-[13px] text-muted hover:text-primary"
+            >
+              <DatabaseBackup className="size-4" aria-hidden />
+              {textoUltimoBackup(diasBackup)} Fazer backup
+            </Link>
+          )}
         </>
       )}
     </div>

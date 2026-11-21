@@ -19,6 +19,7 @@ export function invalidarDados(qc: QueryClient) {
 /** Erros do banco com mensagem já pensada para o usuário (raise exception nas funções SQL). */
 function mensagemDoServidor(e: unknown): string | null {
   const erro = e as { code?: string; message?: string } | null
+  if (erro?.code === '23505') return 'já existe um item com esse nome.'
   if (erro?.message && (erro.code === '22023' || erro.code === 'P0002')) return erro.message
   return null
 }

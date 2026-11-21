@@ -25,6 +25,7 @@ import {
   somarMeses,
 } from '@/lib/format'
 import { useOnline } from '@/lib/online'
+import { rotaVoltar } from '@/lib/rotaVoltar'
 import { useSaidaFormulario } from '@/lib/useSaidaFormulario'
 import { useAcoesCompra, useComprasParceladas } from './api'
 import type { ResumoCompra } from './calculos'
@@ -122,7 +123,7 @@ function valoresIniciais(original: ResumoCompra | null, params: URLSearchParams)
     descricao: params.get('descricao') ?? '',
     valor: valor ? formatValorCampo(valor) : '',
     total: '',
-    situacao: 'nova',
+    situacao: params.get('andamento') ? 'andamento' : 'nova',
     mes: competencia(),
     parcelaAtual: '',
     dia: '',
@@ -152,7 +153,8 @@ function Formulario({ original }: { original: ResumoCompra | null }) {
     resolver: zodResolver(schema),
     defaultValues: valoresIniciais(original, params),
   })
-  const { concluir, fechar } = useSaidaFormulario(isDirty, '/parcelas')
+  const destino = rotaVoltar(params, '/parcelas')
+  const { concluir, fechar } = useSaidaFormulario(isDirty, destino)
 
   const [situacao, valor, total, mes, parcelaAtual] = useWatch({
     control,
@@ -215,7 +217,7 @@ function Formulario({ original }: { original: ResumoCompra | null }) {
       p_primeira_competencia: somarMeses(f.mes, -(parcela - 1)),
       p_parcela_atual: parcela,
     })
-    if (id) concluir('/parcelas')
+    if (id) concluir(destino)
   }
 
   return (

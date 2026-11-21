@@ -35,6 +35,9 @@ const ICONES: Record<string, LucideIcon> = {
   'circle-ellipsis': CircleEllipsis,
 }
 
+/** Ícones que o usuário pode escolher para uma categoria. */
+export const NOMES_ICONES = Object.keys(ICONES)
+
 export function iconeDaCategoria(nome: string | null | undefined): LucideIcon {
   return (nome && ICONES[nome]) || Tag
 }

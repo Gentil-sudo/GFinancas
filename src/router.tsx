@@ -7,7 +7,12 @@ import { EsqueciSenhaPage } from '@/features/auth/EsqueciSenhaPage'
 import { LoginPage } from '@/features/auth/LoginPage'
 import { RedefinirSenhaPage } from '@/features/auth/RedefinirSenhaPage'
 import { RotaDeslogado, RotaProtegida } from '@/features/auth/rotas'
+import { BackupPage } from '@/features/configuracoes/BackupPage'
+import { CategoriasPage } from '@/features/configuracoes/CategoriasPage'
+import { ConfiguracaoInicialPage } from '@/features/configuracoes/ConfiguracaoInicialPage'
 import { ConfiguracoesPage } from '@/features/configuracoes/ConfiguracoesPage'
+import { HistoricoPage } from '@/features/configuracoes/HistoricoPage'
+import { LixeiraPage } from '@/features/configuracoes/LixeiraPage'
 import { DashboardPage } from '@/features/dashboard/DashboardPage'
 import { InvestimentosPage } from '@/features/investimentos/InvestimentosPage'
 import { FormLancamentoPage } from '@/features/lancamentos/FormLancamentoPage'
@@ -50,6 +55,11 @@ export const router = createBrowserRouter([
                   { path: 'metas', element: <MetasPage /> },
                   { path: 'investimentos', element: <InvestimentosPage /> },
                   { path: 'configuracoes', element: <ConfiguracoesPage /> },
+                  { path: 'configuracoes/categorias', element: <CategoriasPage /> },
+                  { path: 'configuracoes/lixeira', element: <LixeiraPage /> },
+                  { path: 'configuracoes/historico', element: <HistoricoPage /> },
+                  { path: 'configuracoes/backup', element: <BackupPage /> },
+                  { path: 'configuracao-inicial', element: <ConfiguracaoInicialPage /> },
                 ],
               },
               // Formulários em tela cheia (sem a barra de navegação)

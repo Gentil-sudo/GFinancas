@@ -1,4 +1,16 @@
-import { Check, ChevronRight, LogOut, TrendingUp } from 'lucide-react'
+import {
+  Check,
+  ChevronRight,
+  DatabaseBackup,
+  History,
+  KeyRound,
+  LogOut,
+  Rocket,
+  Tags,
+  Trash2,
+  TrendingUp,
+  type LucideIcon,
+} from 'lucide-react'
 import { useState, type FormEvent } from 'react'
 import { Link } from 'react-router'
 import { toast } from 'sonner'
@@ -12,6 +24,8 @@ import { cn } from '@/lib/cn'
 import { useOnline } from '@/lib/online'
 import { OPCOES_TEMA, type TemaEscolha } from '@/lib/tema'
 import { useTema } from '@/lib/temaContext'
+import { diasDesdeBackup, textoUltimoBackup } from './backup'
+import { TrocarSenha } from './TrocarSenha'
 
 export function ConfiguracoesPage() {
   return (
@@ -20,19 +34,59 @@ export function ConfiguracoesPage() {
       <SecaoConta />
       <SecaoAparencia />
 
-      <Link
-        to="/investimentos"
-        className="flex min-h-14 items-center gap-3 rounded-card border border-border bg-surface px-5 font-semibold hover:border-primary md:hidden"
+      <nav
+        aria-label="Seções"
+        className="flex flex-col divide-y divide-border rounded-card border border-border bg-surface"
       >
-        <TrendingUp className="size-5 text-primary" aria-hidden />
-        <span className="flex-1">Investimentos</span>
-        <ChevronRight className="size-5 text-muted" aria-hidden />
-      </Link>
-
-      <p className="rounded-card border border-dashed border-border bg-surface px-4 py-6 text-center text-sm text-muted">
-        Categorias, lixeira, histórico de alterações, backup e troca de senha chegam na Fase 6.
-      </p>
+        <ItemMenu to="/investimentos" icone={TrendingUp} titulo="Investimentos" soCelular />
+        <ItemMenu
+          to="/configuracoes/backup"
+          icone={DatabaseBackup}
+          titulo="Backup"
+          detalhe={textoUltimoBackup(diasDesdeBackup())}
+        />
+        <ItemMenu to="/configuracoes/categorias" icone={Tags} titulo="Categorias" />
+        <ItemMenu to="/configuracoes/lixeira" icone={Trash2} titulo="Lixeira" />
+        <ItemMenu to="/configuracoes/historico" icone={History} titulo="Histórico de alterações" />
+        <ItemMenu
+          to="/configuracao-inicial"
+          icone={Rocket}
+          titulo="Configuração inicial"
+          detalhe="Cadastrar parcelas, metas e investimentos que você já tem"
+        />
+      </nav>
     </>
+  )
+}
+
+function ItemMenu({
+  to,
+  icone: Icone,
+  titulo,
+  detalhe,
+  soCelular = false,
+}: {
+  to: string
+  icone: LucideIcon
+  titulo: string
+  detalhe?: string
+  soCelular?: boolean
+}) {
+  return (
+    <Link
+      to={to}
+      className={cn(
+        'flex min-h-14 items-center gap-3 px-5 py-3 hover:bg-bg',
+        soCelular && 'md:hidden',
+      )}
+    >
+      <Icone className="size-5 shrink-0 text-primary" aria-hidden />
+      <span className="flex min-w-0 flex-1 flex-col">
+        <span className="font-semibold">{titulo}</span>
+        {detalhe && <span className="text-[13px] text-muted">{detalhe}</span>}
+      </span>
+      <ChevronRight className="size-5 shrink-0 text-muted" aria-hidden />
+    </Link>
   )
 }
 
@@ -43,6 +97,7 @@ function SecaoConta() {
   const salvar = useSalvarPerfil()
   const online = useOnline()
   const [nome, setNome] = useState<string | null>(null)
+  const [trocarSenha, setTrocarSenha] = useState(false)
   const valorNome = nome ?? perfil?.nome ?? ''
 
   async function salvarNome(e: FormEvent) {
@@ -84,10 +139,17 @@ function SecaoConta() {
         </Botao>
       </form>
 
-      <Botao variante="secundario" onClick={sair} className="self-start">
-        <LogOut className="size-4" aria-hidden />
-        Sair
-      </Botao>
+      <div className="flex flex-wrap gap-2">
+        <Botao variante="secundario" onClick={() => setTrocarSenha(true)}>
+          <KeyRound className="size-4" aria-hidden />
+          Trocar senha
+        </Botao>
+        <Botao variante="secundario" onClick={sair}>
+          <LogOut className="size-4" aria-hidden />
+          Sair
+        </Botao>
+      </div>
+      <TrocarSenha aberta={trocarSenha} onFechar={() => setTrocarSenha(false)} />
     </Card>
   )
 }

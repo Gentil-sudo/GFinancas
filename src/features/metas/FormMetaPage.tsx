@@ -3,7 +3,7 @@ import { differenceInCalendarMonths, parseISO } from 'date-fns'
 import { FileQuestion, Trash2, WifiOff, X } from 'lucide-react'
 import { useId, useMemo, useState } from 'react'
 import { useForm, useWatch } from 'react-hook-form'
-import { useParams } from 'react-router'
+import { useParams, useSearchParams } from 'react-router'
 import { z } from 'zod'
 import { Botao } from '@/components/ui/Botao'
 import { CampoRotulado as Campo } from '@/components/ui/Campo'
@@ -20,6 +20,7 @@ import {
   somarMeses,
 } from '@/lib/format'
 import { useOnline } from '@/lib/online'
+import { rotaVoltar } from '@/lib/rotaVoltar'
 import { useSaidaFormulario } from '@/lib/useSaidaFormulario'
 import type { Meta } from '@/types/db'
 import { useAcoesMeta, useMetas } from './api'
@@ -100,7 +101,9 @@ function Formulario({ original }: { original: Meta | null }) {
       saldoInicial: '',
     },
   })
-  const { concluir, fechar } = useSaidaFormulario(isDirty, '/metas')
+  const [params] = useSearchParams()
+  const destino = rotaVoltar(params, '/metas')
+  const { concluir, fechar } = useSaidaFormulario(isDirty, destino)
   const [alvo, plano, inicio, fim] = useWatch({ control, name: ['alvo', 'plano', 'inicio', 'fim'] })
 
   const opcoesMes = useMemo(
@@ -136,7 +139,7 @@ function Formulario({ original }: { original: Meta | null }) {
     const ok = original
       ? await editar(original.id, dados)
       : await criar(dados, parseValor(d.saldoInicial))
-    if (ok) concluir()
+    if (ok) concluir(params.get('voltar') ? destino : undefined)
   }
 
   async function excluirMeta() {
