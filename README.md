@@ -35,11 +35,15 @@ npm run dev                  # abre em http://localhost:5173
      seguro (gerenciador de senhas). Ela não vai no app, mas é necessária para usar o Supabase CLI.
    - **Region**: **South America (São Paulo)**.
    - Clique em **Create new project** e espere 1 a 2 minutos.
-3. Com o projeto pronto, clique no botão **Connect** no topo da página (ou vá em
-   **Project Settings → API Keys** / **Data API**).
-4. Copie os dois valores para o `.env.local`:
-   - **Project URL** → `VITE_SUPABASE_URL` (algo como `https://abcdefgh.supabase.co`)
-   - **anon public** key (pode aparecer como **Publishable key**) → `VITE_SUPABASE_ANON_KEY`
+3. Com o projeto pronto, clique no botão **Connect** no topo da página. No painel que abre,
+   deixe **Framework** e escolha **Next.js** (qualquer um serve; só interessa a aba `.env.local`
+   do passo 2 "Add files"). Você verá duas linhas:
+   - `NEXT_PUBLIC_SUPABASE_URL=...`
+   - `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=sb_publishable_...`
+4. Copie os valores para o `.env.local` **trocando os nomes** (este projeto usa Vite, não Next.js):
+   - `NEXT_PUBLIC_SUPABASE_URL` → `VITE_SUPABASE_URL`
+   - `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` → `VITE_SUPABASE_ANON_KEY` (a _publishable key_
+     é a nova versão da anon key e funciona do mesmo jeito)
 5. **Não copie a `service_role` / `secret` key.** Ela ignora todas as regras de segurança e
    nunca deve ir para o front-end nem para o repositório.
 6. Reinicie o `npm run dev`. O aviso amarelo "Supabase não configurado" deve sumir.
