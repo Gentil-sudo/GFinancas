@@ -263,6 +263,11 @@ export type Database = {
       }
     }
     Functions: {
+      /** Apaga para sempre todos os dados do usuário logado e a conta de acesso. */
+      excluir_minha_conta: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
+      }
       gerar_parcelas: {
         Args: { compra_id: string; a_partir_de?: number }
         /** Quantidade de parcelas criadas. */

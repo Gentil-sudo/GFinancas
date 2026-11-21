@@ -76,6 +76,7 @@ O banco é criado pelos arquivos de [supabase/migrations/](supabase/migrations/)
 3. `20261121130000_perfis.sql`: perfil do usuário (nome do "Olá" e tema escolhido).
 4. `20261121140000_compras_parceladas_rpc.sql`: criar/editar/cancelar compras parceladas numa
    transação só (nunca fica uma compra pela metade).
+5. `20261121150000_excluir_conta.sql`: "Excluir minha conta" (apaga todos os dados e a conta).
 
 Cada arquivo roda **uma vez só**. Quando chegar uma migration nova, rode só ela.
 
@@ -86,8 +87,9 @@ do arquivo → **Run** (ou Ctrl+Enter). Deve aparecer "Success. No rows returned
 
 - [supabase/tests/rls_dois_usuarios.sql](supabase/tests/rls_dois_usuarios.sql): isolamento entre usuários.
 - [supabase/tests/compras_parceladas.sql](supabase/tests/compras_parceladas.sql): criar, editar, cancelar e desfazer compras.
+- [supabase/tests/excluir_conta.sql](supabase/tests/excluir_conta.sql): excluir a conta apaga tudo de um usuário e nada do outro.
 
-Ambos criam usuários fictícios, testam e apagam tudo no final.
+Todos criam usuários fictícios, testam e apagam tudo no final.
 
 ### Testando o isolamento entre usuários
 
@@ -152,11 +154,82 @@ A escolha é salva no perfil (Supabase) e no navegador (para não piscar ao abri
 5. No Supabase → **Authentication → URL Configuration**:
    - **Site URL**: o endereço da Vercel.
    - **Redirect URLs**: adicione `https://SEU-ENDERECO.vercel.app/**` (mantenha o do localhost).
-6. Recomendado: depois de criar sua conta, **Authentication → Sign In / Providers → Email** →
-   desligue **Allow new users to sign up**. Assim ninguém mais cria conta no seu app.
+6. Se o app for **só seu**: **Authentication → Sign In / Providers → Email** → desligue
+   **Allow new users to sign up**. Se for abrir para outras pessoas, veja a seção abaixo.
 
 A cada `git push` na `main`, a Vercel publica a versão nova. O app avisa "Nova versão
 disponível — Atualizar" (não recarrega sozinho para não perder um formulário aberto).
+
+## Abrir para amigos e família
+
+Cada pessoa cria a própria conta e só vê os próprios dados (garantido pelo RLS). Para isso
+funcionar de verdade, faça estes passos **nesta ordem**:
+
+### 1. E-mail próprio (obrigatório)
+
+O e-mail embutido do Supabase **só envia para os membros do seu time no Supabase**: os outros
+não receberiam a confirmação de cadastro nem o "esqueci a senha". Use um SMTP próprio.
+
+**Opção simples (Gmail):**
+
+1. Crie uma conta Gmail só para o app (ex.: `minhasfinancas.app@gmail.com`).
+2. Ative a **verificação em 2 etapas** dela e crie uma **senha de app** em
+   <https://myaccount.google.com/apppasswords>.
+3. Supabase → **Authentication → Emails → SMTP Settings** → **Enable custom SMTP**:
+   - Sender email: o Gmail criado · Sender name: `Minhas Finanças`
+   - Host: `smtp.gmail.com` · Port: `587`
+   - Username: o Gmail criado · Password: a senha de app (16 letras)
+4. Em **Authentication → Rate Limits**, ajuste "emails sent per hour" (ex.: 30).
+
+O Gmail envia até ~500 e-mails por dia: sobra para amigos e família.
+
+**Opção profissional (depois):** domínio próprio + Resend/Brevo. A Resend só envia para qualquer
+pessoa depois que você verifica um domínio seu.
+
+### 2. E-mails em português
+
+Supabase → **Authentication → Emails → Templates**:
+
+- **Confirm signup**: assunto `Confirme seu cadastro no Minhas Finanças`, corpo =
+  [supabase/templates/confirmar-cadastro.html](supabase/templates/confirmar-cadastro.html).
+- **Reset password**: assunto `Crie uma nova senha no Minhas Finanças`, corpo =
+  [supabase/templates/redefinir-senha.html](supabase/templates/redefinir-senha.html).
+
+### 3. Cadastro aberto, com confirmação
+
+**Authentication → Sign In / Providers → Email**: **Allow new users to sign up** ligado,
+**Confirm email** ligado, **Minimum password length** = 8.
+
+### 4. Excluir conta (LGPD)
+
+Rode a migration `20261121150000_excluir_conta.sql` no SQL Editor (e, se quiser, o teste
+[supabase/tests/excluir_conta.sql](supabase/tests/excluir_conta.sql)). O botão fica em
+Configurações → **Excluir minha conta**. A página [/privacidade](src/features/legal/PrivacidadePage.tsx)
+explica o que é guardado; o cadastro exige aceitar esse texto.
+
+### 5. Anti-robô (Cloudflare Turnstile, grátis)
+
+1. <https://dash.cloudflare.com> → **Turnstile** → **Add widget**: hostnames
+   `gfinc.vercel.app` e `localhost`, modo **Managed**. Anote a **Site Key** e a **Secret Key**.
+2. Vercel → **Environment Variables** → `VITE_TURNSTILE_SITE_KEY` = Site Key → **Redeploy**.
+   Coloque a mesma linha no `.env.local` para desenvolver.
+3. **Só depois do deploy**: Supabase → **Authentication → Attack Protection** → **Enable Captcha
+   protection** → provedor **Turnstile** → cole a **Secret Key**.
+
+A ordem importa: se o Supabase exigir captcha antes de o site ter a Site Key, ninguém consegue
+entrar.
+
+### 6. Contato (opcional)
+
+`VITE_CONTATO_EMAIL` na Vercel aparece na página de privacidade como canal para dúvidas e
+pedidos sobre dados. Sem ela, a página diz para falar com quem convidou.
+
+### Limites do plano grátis
+
+- **Supabase Free:** 500 MB (cada pessoa usa bem menos de 1 MB por ano) e 50 mil usuários.
+  O projeto **pausa após 7 dias sem nenhum uso** (é só reativar no painel) e **não tem backup
+  automático**: o backup de cada pessoa fica na tela de Backup.
+- **Vercel Hobby:** só para uso **não comercial**. Se um dia cobrar, mude para o plano Pro.
 
 ## Instalar no celular (PWA)
 

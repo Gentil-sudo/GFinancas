@@ -21,6 +21,8 @@ const mensagens: Record<string, string> = {
   otp_expired: 'O link expirou ou já foi usado. Peça um novo.',
   flow_state_expired: 'O link expirou. Peça um novo.',
   request_timeout: 'O servidor demorou para responder. Tente de novo.',
+  captcha_failed:
+    'Não foi possível confirmar que você não é um robô. Aguarde a verificação e tente de novo.',
 }
 
 export const MSG_EMAIL_JA_CADASTRADO = mensagens.user_already_exists

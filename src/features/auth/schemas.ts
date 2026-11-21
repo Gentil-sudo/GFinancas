@@ -14,7 +14,12 @@ export const loginSchema = z.object({
 export type LoginDados = z.infer<typeof loginSchema>
 
 export const cadastroSchema = z
-  .object({ email, senha: novaSenha, confirmacao: z.string() })
+  .object({
+    email,
+    senha: novaSenha,
+    confirmacao: z.string(),
+    aceite: z.boolean().refine((v) => v, 'Para criar a conta, aceite a política e os termos.'),
+  })
   .refine((d) => d.senha === d.confirmacao, {
     message: 'As senhas não conferem.',
     path: ['confirmacao'],

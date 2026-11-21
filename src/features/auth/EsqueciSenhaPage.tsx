@@ -7,12 +7,15 @@ import { Botao } from '@/components/ui/Botao'
 import { Campo } from '@/components/ui/Campo'
 import { supabase } from '@/lib/supabase'
 import { AuthLayout } from './AuthLayout'
+import { Captcha } from './Captcha'
 import { traduzirErroAuth } from './erros'
 import { esqueciSenhaSchema, type EsqueciSenhaDados } from './schemas'
+import { useCaptcha } from './useCaptcha'
 
 export function EsqueciSenhaPage() {
   const [erroServidor, setErroServidor] = useState<string | null>(null)
   const [enviadoPara, setEnviadoPara] = useState<string | null>(null)
+  const captcha = useCaptcha()
   const {
     register,
     handleSubmit,
@@ -23,7 +26,9 @@ export function EsqueciSenhaPage() {
     setErroServidor(null)
     const { error } = await supabase.auth.resetPasswordForEmail(dados.email, {
       redirectTo: `${window.location.origin}/redefinir-senha`,
+      captchaToken: captcha.token,
     })
+    captcha.resetar() // o token só vale uma vez
     if (error) setErroServidor(traduzirErroAuth(error))
     else setEnviadoPara(dados.email)
   }
@@ -57,7 +62,9 @@ export function EsqueciSenhaPage() {
             {...register('email')}
           />
 
-          <Botao type="submit" carregando={isSubmitting} larguraTotal>
+          <Captcha {...captcha.props} />
+
+          <Botao type="submit" carregando={isSubmitting} disabled={!captcha.pronto} larguraTotal>
             Enviar link
           </Botao>
         </form>

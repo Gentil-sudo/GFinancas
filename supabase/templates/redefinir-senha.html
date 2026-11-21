@@ -1,0 +1,19 @@
+<!-- Supabase > Authentication > Emails > "Reset password"
+     Assunto: Crie uma nova senha no Minhas Finanças -->
+<div style="font-family: Arial, Helvetica, sans-serif; max-width: 480px; margin: 0 auto; padding: 24px; color: #1a1f36;">
+  <h2 style="margin: 0 0 16px; font-size: 20px;">Esqueceu a senha?</h2>
+  <p style="margin: 0 0 16px; font-size: 15px; line-height: 1.5;">
+    Recebemos um pedido para criar uma nova senha para <strong>{{ .Email }}</strong>.
+    Toque no botão abaixo para escolher a nova senha.
+  </p>
+  <p style="margin: 0 0 24px;">
+    <a href="{{ .ConfirmationURL }}"
+       style="display: inline-block; background: #2F4FD8; color: #ffffff; text-decoration: none; font-weight: bold; padding: 12px 20px; border-radius: 10px;">
+      Criar nova senha
+    </a>
+  </p>
+  <p style="margin: 0; font-size: 13px; line-height: 1.5; color: #5b6478;">
+    O link vale por pouco tempo e só pode ser usado uma vez. Se você não pediu, ignore este
+    e-mail: sua senha continua a mesma.
+  </p>
+</div>

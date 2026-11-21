@@ -6,9 +6,11 @@ import {
   KeyRound,
   LogOut,
   Rocket,
+  ShieldCheck,
   Tags,
   Trash2,
   TrendingUp,
+  UserX,
   type LucideIcon,
 } from 'lucide-react'
 import { useState, type FormEvent } from 'react'
@@ -25,6 +27,7 @@ import { useOnline } from '@/lib/online'
 import { OPCOES_TEMA, type TemaEscolha } from '@/lib/tema'
 import { useTema } from '@/lib/temaContext'
 import { diasDesdeBackup, textoUltimoBackup } from './backup'
+import { ExcluirConta } from './ExcluirConta'
 import { TrocarSenha } from './TrocarSenha'
 
 export function ConfiguracoesPage() {
@@ -54,7 +57,15 @@ export function ConfiguracoesPage() {
           titulo="Configuração inicial"
           detalhe="Cadastrar parcelas, metas e investimentos que você já tem"
         />
+        <ItemMenu
+          to="/privacidade"
+          icone={ShieldCheck}
+          titulo="Privacidade e termos"
+          detalhe="O que é guardado e quem pode ver"
+        />
       </nav>
+
+      <SecaoExcluirConta />
     </>
   )
 }
@@ -151,6 +162,19 @@ function SecaoConta() {
       </div>
       <TrocarSenha aberta={trocarSenha} onFechar={() => setTrocarSenha(false)} />
     </Card>
+  )
+}
+
+function SecaoExcluirConta() {
+  const [aberta, setAberta] = useState(false)
+  return (
+    <div className="flex justify-center">
+      <Botao variante="fantasma" className="text-danger" onClick={() => setAberta(true)}>
+        <UserX className="size-4" aria-hidden />
+        Excluir minha conta
+      </Botao>
+      <ExcluirConta aberta={aberta} onFechar={() => setAberta(false)} />
+    </div>
   )
 }
 

@@ -5,28 +5,41 @@ import { useForm } from 'react-hook-form'
 import { Link } from 'react-router'
 import { Aviso } from '@/components/ui/Aviso'
 import { Botao } from '@/components/ui/Botao'
-import { Campo, CampoSenha } from '@/components/ui/Campo'
+import { Campo, CampoSenha, MensagemCampo } from '@/components/ui/Campo'
+import { VERSAO_TERMOS } from '@/features/legal/termos'
 import { supabase } from '@/lib/supabase'
 import { AuthLayout } from './AuthLayout'
+import { Captcha } from './Captcha'
 import { MSG_EMAIL_JA_CADASTRADO, traduzirErroAuth } from './erros'
 import { cadastroSchema, type CadastroDados } from './schemas'
+import { useCaptcha } from './useCaptcha'
 
 export function CadastroPage() {
   const [erroServidor, setErroServidor] = useState<string | null>(null)
   const [emailConfirmacao, setEmailConfirmacao] = useState<string | null>(null)
+  const captcha = useCaptcha()
   const {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
-  } = useForm<CadastroDados>({ resolver: zodResolver(cadastroSchema) })
+  } = useForm<CadastroDados>({
+    resolver: zodResolver(cadastroSchema),
+    defaultValues: { aceite: false },
+  })
 
   async function cadastrar(dados: CadastroDados) {
     setErroServidor(null)
     const { data, error } = await supabase.auth.signUp({
       email: dados.email,
       password: dados.senha,
-      options: { emailRedirectTo: window.location.origin },
+      options: {
+        emailRedirectTo: window.location.origin,
+        captchaToken: captcha.token,
+        // Registro do aceite (fica nos dados da conta, no Supabase).
+        data: { termos_versao: VERSAO_TERMOS, termos_aceitos_em: new Date().toISOString() },
+      },
     })
+    captcha.resetar() // o token só vale uma vez
 
     if (error) {
       setErroServidor(traduzirErroAuth(error))
@@ -105,7 +118,33 @@ export function CadastroPage() {
           {...register('confirmacao')}
         />
 
-        <Botao type="submit" carregando={isSubmitting} larguraTotal>
+        <div className="flex flex-col gap-1.5">
+          <label className="flex items-start gap-3 text-sm">
+            <input
+              type="checkbox"
+              className="mt-0.5 size-5 shrink-0 accent-primary"
+              aria-invalid={errors.aceite ? true : undefined}
+              aria-describedby={errors.aceite ? 'aceite-erro' : undefined}
+              {...register('aceite')}
+            />
+            <span>
+              Li e aceito a{' '}
+              <Link
+                to="/privacidade"
+                target="_blank"
+                className="font-semibold text-primary hover:underline"
+              >
+                política de privacidade e os termos de uso
+              </Link>
+              .
+            </span>
+          </label>
+          <MensagemCampo id="aceite-erro" erro={errors.aceite?.message} />
+        </div>
+
+        <Captcha {...captcha.props} />
+
+        <Botao type="submit" carregando={isSubmitting} disabled={!captcha.pronto} larguraTotal>
           Criar conta
         </Botao>
       </form>

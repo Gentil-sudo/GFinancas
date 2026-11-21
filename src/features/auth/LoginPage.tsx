@@ -7,11 +7,14 @@ import { Botao } from '@/components/ui/Botao'
 import { Campo, CampoSenha } from '@/components/ui/Campo'
 import { supabase } from '@/lib/supabase'
 import { AuthLayout } from './AuthLayout'
+import { Captcha } from './Captcha'
 import { traduzirErroAuth } from './erros'
 import { loginSchema, type LoginDados } from './schemas'
+import { useCaptcha } from './useCaptcha'
 
 export function LoginPage() {
   const [erroServidor, setErroServidor] = useState<string | null>(null)
+  const captcha = useCaptcha()
   const {
     register,
     handleSubmit,
@@ -23,7 +26,9 @@ export function LoginPage() {
     const { error } = await supabase.auth.signInWithPassword({
       email: dados.email,
       password: dados.senha,
+      options: { captchaToken: captcha.token },
     })
+    captcha.resetar() // o token só vale uma vez
     if (error) setErroServidor(traduzirErroAuth(error))
     // Sucesso: a sessão chega pelo AuthProvider e a RotaDeslogado redireciona sozinha.
   }
@@ -33,12 +38,17 @@ export function LoginPage() {
       titulo="Entrar"
       subtitulo="Acesse suas finanças."
       rodape={
-        <p>
-          Não tem conta?{' '}
-          <Link to="/cadastro" className="font-medium text-primary hover:underline">
-            Criar conta
+        <>
+          <p>
+            Não tem conta?{' '}
+            <Link to="/cadastro" className="font-medium text-primary hover:underline">
+              Criar conta
+            </Link>
+          </p>
+          <Link to="/privacidade" className="hover:underline">
+            Privacidade e termos
           </Link>
-        </p>
+        </>
       }
     >
       <form onSubmit={handleSubmit(entrar)} noValidate className="flex flex-col gap-4">
@@ -67,7 +77,9 @@ export function LoginPage() {
           Esqueci minha senha
         </Link>
 
-        <Botao type="submit" carregando={isSubmitting} larguraTotal>
+        <Captcha {...captcha.props} />
+
+        <Botao type="submit" carregando={isSubmitting} disabled={!captcha.pronto} larguraTotal>
           Entrar
         </Botao>
       </form>

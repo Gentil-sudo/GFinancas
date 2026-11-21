@@ -43,6 +43,14 @@ export const router = createBrowserRouter([
           },
         ],
       },
+      // Pública: logado ou não
+      {
+        path: '/privacidade',
+        lazy: tela(
+          () => import('@/features/legal/PrivacidadePage'),
+          (m) => m.PrivacidadePage,
+        ),
+      },
       // Destino do link de recuperação (chega com sessão temporária)
       {
         path: '/redefinir-senha',
