@@ -9,7 +9,7 @@ function assinar(callback: () => void) {
   }
 }
 
-/** `false` quando o navegador está sem internet. Usado para bloquear gravações (PLANO §5.2). */
+/** `false` quando o navegador está sem internet. Usado para bloquear gravações. */
 export function useOnline(): boolean {
   return useSyncExternalStore(
     assinar,

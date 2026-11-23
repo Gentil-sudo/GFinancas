@@ -32,7 +32,7 @@ function SincronizarTemaDoPerfil() {
   return null
 }
 
-/** PLANO §5.2: sem internet, avisar claramente que nada será salvo. */
+/** Sem internet, avisar claramente que nada será salvo. */
 function AvisoOffline() {
   const online = useOnline()
   if (online) return null

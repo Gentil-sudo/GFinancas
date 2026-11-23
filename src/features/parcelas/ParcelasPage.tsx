@@ -173,7 +173,7 @@ function BotaoNovaCompra({ tracejado = false }: { tracejado?: boolean }) {
   )
 }
 
-/** Visão secundária: compras × meses (PLANO §4.4). */
+/** Visão secundária: compras × meses. */
 function TabelaParcelas({ compras, meses }: { compras: ResumoCompra[]; meses: string[] }) {
   const valor = (r: ResumoCompra, m: string) =>
     somar(r.parcelas.filter((p) => p.competencia === m).map((p) => p.valor))

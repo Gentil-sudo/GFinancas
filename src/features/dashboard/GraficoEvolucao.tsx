@@ -140,7 +140,7 @@ export function GraficoEvolucao({ meses, resumos }: { meses: string[]; resumos: 
             </ResponsiveContainer>
           </div>
 
-          {/* Visão em tabela: opção secundária (PLANO §4.0) e alternativa acessível */}
+          {/* Visão em tabela: opção secundária e alternativa acessível */}
           <details className="text-sm">
             <summary className="inline-flex min-h-11 cursor-pointer items-center font-semibold text-primary">
               Ver em tabela

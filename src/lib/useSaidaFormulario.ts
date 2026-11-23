@@ -4,7 +4,7 @@ import { useBlocker, useNavigate } from 'react-router'
 type Destino = { para: string; substituir: boolean } | { voltar: true }
 
 /**
- * Navegação de formulários (PLANO §5.6):
+ * Navegação de formulários:
  *  - com alterações não salvas, pergunta antes de sair (link, botão voltar ou fechar a aba);
  *  - `concluir()` sai sem perguntar (depois de salvar, ou indo para outro formulário).
  */

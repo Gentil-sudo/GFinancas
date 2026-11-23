@@ -38,7 +38,7 @@ const PASSOS = [
 const DESCRICAO_SALDO = 'Saldo anterior'
 
 /**
- * Assistente de primeiro acesso (PLANO Fase 6): cadastrar o estado atual à mão, passo a passo.
+ * Assistente de primeiro acesso: cadastrar o estado atual à mão, passo a passo.
  * Cada passo salva na hora; dá para parar e continuar depois (o passo fica na URL).
  */
 export function ConfiguracaoInicialPage() {

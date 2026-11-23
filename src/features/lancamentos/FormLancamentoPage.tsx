@@ -166,7 +166,7 @@ function Formulario({ modo, original }: { modo: Modo; original: Lancamento | nul
     name: ['tipo', 'status', 'descricao', 'competencia'],
   })
 
-  // ---------- aviso ao sair com alterações não salvas (PLANO §5.6)
+  // ---------- aviso ao sair com alterações não salvas
   const { concluir, fechar } = useSaidaFormulario(isDirty, '/lancamentos')
 
   /** "É uma compra parcelada?": leva o que já foi digitado para o cadastro de parcelas. */

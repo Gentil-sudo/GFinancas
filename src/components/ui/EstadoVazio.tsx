@@ -2,7 +2,7 @@ import type { LucideIcon } from 'lucide-react'
 import type { ReactNode } from 'react'
 import { cn } from '@/lib/cn'
 
-/** Estado vazio que ensina: ícone, frase e uma ação (PLANO §4.0). */
+/** Estado vazio que ensina: ícone, frase e uma ação. */
 export function EstadoVazio({
   icone: Icone,
   titulo,

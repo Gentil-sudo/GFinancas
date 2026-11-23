@@ -179,7 +179,7 @@ async function marcarExcluidos(ids: string[], excluido: boolean) {
 }
 
 /**
- * Ações sobre lançamentos. Seguem o PLANO §5 via useExecutarAcao: "Salvo ✓" só depois do
+ * Ações sobre lançamentos. Seguem as regras de gravação do useExecutarAcao: "Salvo ✓" só depois do
  * servidor, com "Desfazer"; offline ou erro → nada é fingido e o formulário fica preenchido.
  */
 export function useAcoesLancamento() {

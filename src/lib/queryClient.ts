@@ -8,7 +8,7 @@ export const queryClient = new QueryClient({
       refetchOnWindowFocus: true,
     },
     mutations: {
-      // Nunca repetir uma gravação sozinho: o usuário decide "tentar de novo" (ver PLANO §5).
+      // Nunca repetir uma gravação sozinho: o usuário decide "tentar de novo".
       retry: 0,
     },
   },

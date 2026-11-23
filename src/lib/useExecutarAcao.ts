@@ -25,7 +25,7 @@ function mensagemDoServidor(e: unknown): string | null {
 }
 
 /**
- * Executa uma gravação seguindo o PLANO §5:
+ * Executa uma gravação seguindo estas regras:
  *  - recusa se estiver offline (nada de "fingir que salvou");
  *  - "Salvo ✓" só DEPOIS da confirmação do servidor, com "Desfazer" quando possível;
  *  - em erro: "Não foi salvo — tentar de novo", e devolve `undefined` (quem chamou mantém

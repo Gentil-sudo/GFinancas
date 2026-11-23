@@ -1,7 +1,7 @@
 @import 'tailwindcss';
 
 /*
- * Temas (PLANO §4.0.1). Os componentes usam SÓ estes tokens, nunca cores diretas:
+ * Temas. Os componentes usam SÓ estes tokens, nunca cores diretas:
  *   bg-bg, bg-surface, border-border, text-text, text-muted, bg-primary, bg-primary-soft,
  *   text-on-primary, bg-hero-bg, text-hero-text, text-hero-muted, text-hero-value,
  *   text-success (entrada/pago), text-danger (saída/vencida), text-warning (pendente),
