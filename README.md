@@ -1,11 +1,17 @@
 # Minhas Finanças
 
 Organizador financeiro pessoal: lançamentos, parcelas, metas e investimentos, salvos direto no
-banco (Supabase) para nunca mais perder dados. O plano completo está em [PLANO.md](PLANO.md).
+banco (Supabase) para nunca mais perder dados.
 
 **Stack:** React + Vite + TypeScript · Tailwind CSS · React Router · TanStack Query ·
 react-hook-form + zod · Recharts · write-excel-file (backup .xlsx) · vite-plugin-pwa ·
-Supabase (Auth + Postgres + RLS) · Vercel.
+Supabase (Auth + Postgres + RLS) · Cloudflare Turnstile · Vercel.
+
+## Uso de IA
+
+Usei ferramentas de IA para acelerar a escrita do código e da documentação. As decisões são
+minhas: o que o app faz, as regras de dinheiro, como os dados ficam protegidos (RLS no banco e
+captcha do Cloudflare Turnstile ligado ao Supabase) e a ordem em que cada parte foi construída.
 
 ## Rodando localmente
 
@@ -136,8 +142,8 @@ supabase/
 
 ## Temas
 
-Três temas (Clareza, Noite, Lavanda) + Automático, escolhidos em **Configurações → Aparência**
-(PLANO §4.0.1). As cores ficam só em [src/index.css](src/index.css), como variáveis por
+Três temas (Clareza, Noite, Lavanda) + Automático, escolhidos em **Configurações → Aparência**.
+As cores ficam só em [src/index.css](src/index.css), como variáveis por
 `[data-theme]`; os componentes usam apenas os tokens (`bg-surface`, `text-muted`, `bg-primary`…).
 A escolha é salva no perfil (Supabase) e no navegador (para não piscar ao abrir).
 
